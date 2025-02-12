@@ -11,6 +11,7 @@ namespace UserApp.Domain.Entities
         public Screen? ScreenFather { get; set; }
         public int? ScreenFatherId { get; set; }
         public int Order { get; set; }
+        public bool IsFather { get; set; }
         public List<Screen> ScreenChildren { get; set; }
         public List<RoleScreen> RolesScreens { get; set; }
         public List<ScreenAction> ScreenActions { get; set; }
@@ -22,6 +23,7 @@ namespace UserApp.Domain.Entities
                 builder.Property(x => x.Id).HasColumnName("screen_id");
                 builder.Property(x => x.ScreenFatherId).HasColumnName("screen_father_id");
                 builder.Property(x => x.Order).HasColumnName("order").IsRequired();
+                builder.Property(x => x.IsFather).HasColumnName("is_father").IsRequired().HasDefaultValue(false);
                 builder.Property(x => x.Name).HasColumnType("VARCHAR").HasMaxLength(255).HasColumnName("name");
                 builder.Property(x => x.Route).HasColumnType("VARCHAR").HasMaxLength(255).HasColumnName("route");
 

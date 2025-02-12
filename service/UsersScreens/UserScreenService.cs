@@ -39,9 +39,10 @@ namespace UserApp.Service.UsersScreens
                         ScreenId = s.Id,
                         Name = s.Name,
                         Route = s.Route,
-                        IsFather = s.ScreenFatherId == null ? true : false,
+                        IsFather = s.IsFather,
                         ScreenFatherId = s.ScreenFatherId,
-                        Order = s.Order
+                        Order = s.Order,
+                        Children = new List<MenuDto>()
                     }
             );
 

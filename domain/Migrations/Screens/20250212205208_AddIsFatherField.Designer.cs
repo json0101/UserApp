@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserApp.Domain;
 
 #nullable disable
 
-namespace UserApp.Domain.Migrations.Init
+namespace UserApp.Domain.Migrations.Screens
 {
     [DbContext(typeof(UserAppContext))]
-    partial class UserAppContextModelSnapshot : ModelSnapshot
+    [Migration("20250212205208_AddIsFatherField")]
+    partial class AddIsFatherField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
