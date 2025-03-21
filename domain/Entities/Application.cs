@@ -8,8 +8,8 @@ namespace UserApp.Domain.Entities
     {
         public string Description { get; set; }
         public List<Role> Roles { get; set; }
-
         public List<UserApplication> UsersApplications { get; set; }
+        public List<Screen> Screens { get; set; }
 
         public class Map : BaseEntityConfiguration<Application>
         {
