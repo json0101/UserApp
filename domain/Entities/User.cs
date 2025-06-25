@@ -11,6 +11,7 @@ namespace UserApp.Domain.Entities
         public string Email { get; set; }
         public int? CountryId { get; set; }
         public int? AddressId { get; set; }
+        public string EmployeeCode { get; set; }
         public List<UserApplication> UsersApplications { get; set; }
         public List<UserRole> UsersRoles { get; set; }
 
@@ -25,6 +26,7 @@ namespace UserApp.Domain.Entities
                 builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(255);
                 builder.Property(x => x.CountryId).HasColumnName("country_id");
                 builder.Property(x => x.AddressId).HasColumnName("address_id");
+                builder.Property(x => x.EmployeeCode).HasColumnName("employee_code").HasMaxLength(10);
 
                 builder.ToTable("users", "sec");
             }

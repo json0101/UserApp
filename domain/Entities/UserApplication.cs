@@ -7,7 +7,7 @@ namespace UserApp.Domain.Entities
     public class UserApplication : BaseEntity
     {
         public int ApplicationId { get; set; }
-        public Application Application { get; set; }
+        public ApplicationRegister Application { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
 

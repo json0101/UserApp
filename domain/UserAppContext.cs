@@ -14,7 +14,7 @@ namespace UserApp.Domain
         public DbSet<RoleScreen> RoleScreen { get; set; }
         public DbSet<Screen> Screen { get; set; }
         public DbSet<ScreenAction> ScreenAction { get; set; }
-        public DbSet<Application> Application { get; set; }
+        public DbSet<ApplicationRegister> Application { get; set; }
         public DbSet<UserApplication> UserApplication { get; set; }
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<ActionSys> Action { get; set; }
@@ -26,7 +26,7 @@ namespace UserApp.Domain
             modelBuilder.ApplyConfiguration(new RoleScreen.Map());
             modelBuilder.ApplyConfiguration(new Screen.Map());
             modelBuilder.ApplyConfiguration(new ScreenAction.Map());
-            modelBuilder.ApplyConfiguration(new Application.Map());
+            modelBuilder.ApplyConfiguration(new ApplicationRegister.Map());
             modelBuilder.ApplyConfiguration(new UserApplication.Map());
             modelBuilder.ApplyConfiguration(new UserRole.Map());
             modelBuilder.ApplyConfiguration(new User.Map());

@@ -12,8 +12,8 @@ namespace UserApp.Domain.Entities
         public int? ScreenFatherId { get; set; }
         public int Order { get; set; }
         public bool IsFather { get; set; }
-        public int ApplicationId { get; set; }
-        public Application Application { get; set; }
+        public int? ApplicationId { get; set; }
+        public ApplicationRegister Application { get; set; }
         public List<Screen> ScreenChildren { get; set; }
         public List<RoleScreen> RolesScreens { get; set; }
         public List<ScreenAction> ScreenActions { get; set; }
@@ -34,6 +34,12 @@ namespace UserApp.Domain.Entities
                     .HasOne(e => e.ScreenFather)
                     .WithMany(e => e.ScreenChildren)
                     .HasForeignKey(e => e.ScreenFatherId)
+                    .HasPrincipalKey(e => e.Id);
+
+                builder
+                    .HasOne(e => e.Application)
+                    .WithMany(e => e.Screens)
+                    .HasForeignKey(e => e.ApplicationId)
                     .HasPrincipalKey(e => e.Id);
 
                 builder.ToTable("screens", "sec");

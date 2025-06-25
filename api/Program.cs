@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var userAppConnectionString = builder.Configuration.GetConnectionString("UserApp");
-UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString);
+UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 3);
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -12,8 +12,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Adding inyection dependency
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
