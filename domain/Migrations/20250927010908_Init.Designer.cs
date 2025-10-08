@@ -2,18 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserApp.Domain;
 
 #nullable disable
 
-namespace UserApp.Domain.Migrations.Init
+namespace UserApp.Domain.Migrations
 {
     [DbContext(typeof(UserAppContext))]
-    [Migration("20250203190059_InitDatabase")]
-    partial class InitDatabase
+    [Migration("20250927010908_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,25 +21,25 @@ namespace UserApp.Domain.Migrations.Init
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.1")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("domain.Entities.ActionSys", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.ActionSys", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("action_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -55,7 +55,7 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("description");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -68,21 +68,21 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("actions", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.Application", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.ApplicationRegister", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("application_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -98,7 +98,7 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("description");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -111,25 +111,25 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("applications", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.Role", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("role_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<int>("ApplicationId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("application_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -145,7 +145,7 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("description");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -160,21 +160,21 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("roles", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.RoleScreen", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.RoleScreen", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("role_screen_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -184,15 +184,15 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("created_by");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("role_id");
 
                     b.Property<int>("ScreenId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("screen_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -209,21 +209,25 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("roles_screens", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.Screen", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.Screen", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("screen_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
+                    b.Property<int?>("ApplicationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("application_id");
+
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -232,6 +236,12 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnType("VARCHAR")
                         .HasColumnName("created_by");
 
+                    b.Property<bool>("IsFather")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_father");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -239,7 +249,7 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("name");
 
                     b.Property<int>("Order")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("order");
 
                     b.Property<string>("Route")
@@ -249,11 +259,11 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("route");
 
                     b.Property<int?>("ScreenFatherId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("screen_father_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -263,30 +273,32 @@ namespace UserApp.Domain.Migrations.Init
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationId");
+
                     b.HasIndex("ScreenFatherId");
 
                     b.ToTable("screens", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.ScreenAction", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.ScreenAction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("user_application_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ActionId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("action_id");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -296,11 +308,11 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("created_by");
 
                     b.Property<int>("ScreenId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("screen_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -317,29 +329,29 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("screens_actions", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.User", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<int?>("AddressId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("address_id");
 
                     b.Property<int?>("CountryId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("country_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -351,16 +363,22 @@ namespace UserApp.Domain.Migrations.Init
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("email");
+
+                    b.Property<string>("EmployeeCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("employee_code");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("password");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -371,7 +389,7 @@ namespace UserApp.Domain.Migrations.Init
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("username");
 
                     b.HasKey("Id");
@@ -379,25 +397,25 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("users", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.UserApplication", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.UserApplication", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("user_application_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<int>("ApplicationId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("application_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -407,7 +425,7 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("created_by");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -416,7 +434,7 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("updated_by");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -428,21 +446,21 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("users_applications", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.UserRole", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.UserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("user_role_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("active");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedBy")
@@ -452,11 +470,11 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("created_by");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("role_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UpdatedBy")
@@ -465,7 +483,7 @@ namespace UserApp.Domain.Migrations.Init
                         .HasColumnName("updated_by");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -477,9 +495,9 @@ namespace UserApp.Domain.Migrations.Init
                     b.ToTable("users_roles", "sec");
                 });
 
-            modelBuilder.Entity("domain.Entities.Role", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.Role", b =>
                 {
-                    b.HasOne("domain.Entities.Application", "Application")
+                    b.HasOne("UserApp.Domain.Entities.ApplicationRegister", "Application")
                         .WithMany("Roles")
                         .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -488,15 +506,15 @@ namespace UserApp.Domain.Migrations.Init
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("domain.Entities.RoleScreen", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.RoleScreen", b =>
                 {
-                    b.HasOne("domain.Entities.Role", "Role")
+                    b.HasOne("UserApp.Domain.Entities.Role", "Role")
                         .WithMany("RolesScreens")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Entities.Screen", "Screen")
+                    b.HasOne("UserApp.Domain.Entities.Screen", "Screen")
                         .WithMany("RolesScreens")
                         .HasForeignKey("ScreenId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -507,24 +525,30 @@ namespace UserApp.Domain.Migrations.Init
                     b.Navigation("Screen");
                 });
 
-            modelBuilder.Entity("domain.Entities.Screen", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.Screen", b =>
                 {
-                    b.HasOne("domain.Entities.Screen", "ScreenFather")
+                    b.HasOne("UserApp.Domain.Entities.ApplicationRegister", "Application")
+                        .WithMany("Screens")
+                        .HasForeignKey("ApplicationId");
+
+                    b.HasOne("UserApp.Domain.Entities.Screen", "ScreenFather")
                         .WithMany("ScreenChildren")
                         .HasForeignKey("ScreenFatherId");
+
+                    b.Navigation("Application");
 
                     b.Navigation("ScreenFather");
                 });
 
-            modelBuilder.Entity("domain.Entities.ScreenAction", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.ScreenAction", b =>
                 {
-                    b.HasOne("domain.Entities.ActionSys", "Action")
+                    b.HasOne("UserApp.Domain.Entities.ActionSys", "Action")
                         .WithMany("ScreenActions")
                         .HasForeignKey("ActionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Entities.Screen", "Screen")
+                    b.HasOne("UserApp.Domain.Entities.Screen", "Screen")
                         .WithMany("ScreenActions")
                         .HasForeignKey("ScreenId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -535,15 +559,15 @@ namespace UserApp.Domain.Migrations.Init
                     b.Navigation("Screen");
                 });
 
-            modelBuilder.Entity("domain.Entities.UserApplication", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.UserApplication", b =>
                 {
-                    b.HasOne("domain.Entities.Application", "Application")
+                    b.HasOne("UserApp.Domain.Entities.ApplicationRegister", "Application")
                         .WithMany("UsersApplications")
                         .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Entities.User", "User")
+                    b.HasOne("UserApp.Domain.Entities.User", "User")
                         .WithMany("UsersApplications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -554,15 +578,15 @@ namespace UserApp.Domain.Migrations.Init
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("domain.Entities.UserRole", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.UserRole", b =>
                 {
-                    b.HasOne("domain.Entities.Role", "Role")
+                    b.HasOne("UserApp.Domain.Entities.Role", "Role")
                         .WithMany("UsersRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("domain.Entities.User", "User")
+                    b.HasOne("UserApp.Domain.Entities.User", "User")
                         .WithMany("UsersRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -573,26 +597,28 @@ namespace UserApp.Domain.Migrations.Init
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("domain.Entities.ActionSys", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.ActionSys", b =>
                 {
                     b.Navigation("ScreenActions");
                 });
 
-            modelBuilder.Entity("domain.Entities.Application", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.ApplicationRegister", b =>
                 {
                     b.Navigation("Roles");
+
+                    b.Navigation("Screens");
 
                     b.Navigation("UsersApplications");
                 });
 
-            modelBuilder.Entity("domain.Entities.Role", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.Role", b =>
                 {
                     b.Navigation("RolesScreens");
 
                     b.Navigation("UsersRoles");
                 });
 
-            modelBuilder.Entity("domain.Entities.Screen", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.Screen", b =>
                 {
                     b.Navigation("RolesScreens");
 
@@ -601,7 +627,7 @@ namespace UserApp.Domain.Migrations.Init
                     b.Navigation("ScreenChildren");
                 });
 
-            modelBuilder.Entity("domain.Entities.User", b =>
+            modelBuilder.Entity("UserApp.Domain.Entities.User", b =>
                 {
                     b.Navigation("UsersApplications");
 

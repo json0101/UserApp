@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UserApp.Service.Global;
 using UserApp.Service.Services.Screens.Dtos;
 using UserApp.Service.Services.Screens.Service;
 
@@ -24,6 +25,13 @@ namespace UserApp.Api.Controllers.Screen
         public IResult GetAll()
         {
             return Results.Ok(_screenService.GetScreens());
+        }
+
+        [HttpGet("resume")]
+        public IResult GetAllResume()
+        {
+            var screens = _screenService.GetScreens(ApplicationGlobal.ApplicationGlobalID);
+            return Results.Ok(screens);
         }
 
         [HttpGet("fathers")]

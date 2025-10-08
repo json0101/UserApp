@@ -116,7 +116,7 @@ namespace UserApp.Service.Services.Screens.Service
             screen.IsFather = createScreenDto.isFather;
 
             screen.Active = true;
-            screen.CreatedAt = DateTime.Now;
+            screen.CreatedAt = DateTime.UtcNow;
             screen.CreatedBy = "jason.hernandez";
 
             _screenRepository.Insert(screen);

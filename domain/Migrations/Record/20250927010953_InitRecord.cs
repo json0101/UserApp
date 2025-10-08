@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace UserApp.Domain.Migrations.Init.Records
+namespace UserApp.Domain.Migrations.Record
 {
     /// <inheritdoc />
-    public partial class AddInitRecords : Migration
+    public partial class InitRecord : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,8 +16,7 @@ namespace UserApp.Domain.Migrations.Init.Records
                 columns: new[] { "created_at", "created_by", "active", "description" },
                 values: new object[,]
                 {
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Export System" },
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Logistics System" },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "User" },
                 }
             );
 
@@ -27,10 +26,10 @@ namespace UserApp.Domain.Migrations.Init.Records
                 columns: new[] { "created_at", "created_by", "active", "description" },
                 values: new object[,]
                 {
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "OnlyView" },
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Save" },
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Delete" },
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Modify" },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "OnlyView" },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Save" },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Delete" },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Modify" },
                 }
             );
 
@@ -40,9 +39,7 @@ namespace UserApp.Domain.Migrations.Init.Records
                 columns: new[] { "created_at", "created_by", "active", "description", "application_id" },
                 values: new object[,]
                 {
-                    { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Shipping", 1 },
-                    { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Planning", 1 },
-                    { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Impex" , 1},
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Administrador", 1 },                    
                 }
             );
 
@@ -52,20 +49,20 @@ namespace UserApp.Domain.Migrations.Init.Records
                 columns: new[] { "created_at", "created_by", "active", "name", "route", "screen_father_id", "order" },
                 values: new object[,]
                 {
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "VSP" , "/vsp", null, 1},
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Planning", "/vsp/planning", 1, 2 },
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Shipping", "/vsp/shipping", 1, 3 },
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "Impex", "/vsp/impex", 1, 4 },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Users" , "/users", null, 1},
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Roles", "/roles", 1, 2 },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Users - Roles", "/user/rol", 1, 3 },
+                    { DateTime.Now.ToUniversalTime(), "system", true, "Screens", "/screen", 1, 4 },
                 }
             );
 
             migrationBuilder.InsertData(
                 table: "users",
                 schema: "sec",
-                columns: new[] { "created_at", "created_by", "active", "username", "password", "email", "country_id", "address_id" },
+                columns: new[] { "created_at", "created_by", "active", "username", "password", "email", "country_id", "address_id", "employee_code" },
                 values: new object[,]
                 {
-            { DateTime.Now.ToString("yyyyMMdd hh:mm:ss"), "system", true, "jason.hernandez" , "123", "jason.hernandez@tegraglobal.com", null, null},
+                    { DateTime.Now.ToUniversalTime(), "system", true, "jason.hernandez" , "123", "jasonhernandezaguilar@gmail.com", null, null, "0000-0001"},
                 }
             );
         }
