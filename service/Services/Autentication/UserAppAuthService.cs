@@ -21,9 +21,11 @@ namespace UserApp.Service.Services.Autentication
             _userApplicationService = userApplicationService;
         }
 
+        
+
         public UserDto Login(LoginDto loginDto)
         {
-            return new UserDto();
+            throw new NotImplementedException();
         }
 
         public UserDto? UserValidByEmployeeCod(string employeeCod, out string message)

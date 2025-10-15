@@ -32,7 +32,7 @@ namespace UserApp.Service
             services.AddScoped<IRoleService, RoleService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddDbContext<UserAppContext>(options => options.UseNpgsql(userAppConnectionString));
+            services.AddDbContext<UserAppContext>(options => options.UseSqlServer(userAppConnectionString));
             var configurationMapper = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<UserProfile>();
