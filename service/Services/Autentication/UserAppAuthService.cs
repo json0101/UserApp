@@ -1,8 +1,13 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using service.Commons.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using UserApp.Domain.Entities;
+using UserApp.Repository;
 using UserApp.Service.Global;
 using UserApp.Service.Services.Autentication.Dtos;
 using UserApp.Service.Services.Users;
@@ -15,17 +20,45 @@ namespace UserApp.Service.Services.Autentication
     {
         private readonly IUserService _userService;
         private readonly IUserApplicationService _userApplicationService;
-        public UserAppAuthService(IUserService userService, IUserApplicationService userApplicationService)
+        private readonly IRepository<User> _userRepository;
+        public UserAppAuthService(
+            IUserService userService, 
+            IUserApplicationService userApplicationService, 
+            IRepository<User> userRepository)
         {
             _userService = userService;
             _userApplicationService = userApplicationService;
+            _userRepository = userRepository;
         }
 
         
 
         public UserDto Login(LoginDto loginDto)
         {
-            throw new NotImplementedException();
+            byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(loginDto.password);
+            byte[] inArray = SHA1.HashData(vectoBytes);
+
+            string passwordEncrypted = Convert.ToBase64String(inArray);
+
+            var us = _userRepository
+                        .GetDbSet()
+                        .Where(
+                            x => x.UserName == loginDto.userName 
+                            && x.Password == passwordEncrypted
+                        )
+                        .FirstOrDefault();
+
+            if (us is null)
+            {
+                throw new NotFoundException("Correo no registrado o contraseña incorrecta");
+            }
+
+            UserDto user = new UserDto();
+            user.UserName = us.UserName;
+            user.Email = us.Email;
+            user.EmployeeCode = us.EmployeeCode;
+
+            return user;
         }
 
         public UserDto? UserValidByEmployeeCod(string employeeCod, out string message)

@@ -5,6 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var userAppConnectionString = builder.Configuration.GetConnectionString("UserApp");
 UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 1);
+
+string jwtSecret = builder.Configuration["AppSetting:JwtSecret"] ?? "";
+
 // Add services to the container.
 
 builder.Services.AddControllers(options =>

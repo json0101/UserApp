@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using service.Commons.Exceptions;
+using System.Security.Cryptography;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
 using UserApp.Service.Services.Users.Dto;
@@ -72,7 +73,12 @@ namespace UserApp.Service.Services.Users
             user.UserName = createUser.username;
             user.Email = createUser.email;
             user.EmployeeCode = createUser.employeeCode;
-            user.Password = createUser.password;
+
+            byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(createUser.password);
+            byte[] inArray = SHA1.HashData(vectoBytes);
+
+            string passwordEncrypted = Convert.ToBase64String(inArray);
+            user.Password = passwordEncrypted;
 
             user.CreatedBy = "jason.hernandez";
             user.CreatedAt = DateTime.Now.ToUniversalTime();
