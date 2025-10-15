@@ -86,7 +86,7 @@ namespace UserApp.Service.Services.RolesScreens
             var roleScreen = (
                     from rs in _repositoryRoleScreen.GetDbSet()
                     where rs.Id == roleScreenId
-                    select new RoleScreenEditDto(rs.RoleId, rs.ScreenId)                    
+                    select new RoleScreenEditDto(rs.Id, rs.RoleId, rs.ScreenId)                    
             ).FirstOrDefault();
 
             if (roleScreen == null)
@@ -95,6 +95,28 @@ namespace UserApp.Service.Services.RolesScreens
             }
 
             return roleScreen;
+        }
+
+        public void Update(UpdateRoleScreenDto updateRole)
+        {
+            var update = _repositoryRoleScreen
+                            .GetDbSet()
+                            .Where(x => x.Id == updateRole.id && x.Active)
+                            .FirstOrDefault();
+
+
+            if (update == null)
+            {
+                throw new BadRequestException("Role Screen doesn't exists");
+            }
+
+            update.ScreenId = updateRole.screenId;
+            update.RoleId = updateRole.roleId;
+
+            update.UpdatedBy = "jason.hernandez";
+            update.UpdatedAt = DateTime.Now.ToUniversalTime();
+
+            _repositoryRoleScreen.SaveChanges();
         }
     }
 }

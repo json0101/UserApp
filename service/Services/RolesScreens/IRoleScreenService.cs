@@ -10,8 +10,9 @@ namespace UserApp.Service.Services.RolesScreens
     public interface IRoleScreenService
     {
         List<RoleScreenGridDto> GetGrid();
-        int Get(int roleScreenId);
+        RoleScreenEditDto Get(int roleScreenId);
         int Create(CreateRoleScreenDto createRole);
+        void Update(UpdateRoleScreenDto updateRole);
         void Delete(int roleScreenId);
     }
 }

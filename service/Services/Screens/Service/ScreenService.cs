@@ -116,7 +116,7 @@ namespace UserApp.Service.Services.Screens.Service
             screen.IsFather = createScreenDto.isFather;
 
             screen.Active = true;
-            screen.CreatedAt = DateTime.UtcNow;
+            screen.CreatedAt = DateTime.Now.ToUniversalTime();
             screen.CreatedBy = "jason.hernandez";
 
             _screenRepository.Insert(screen);
@@ -141,7 +141,7 @@ namespace UserApp.Service.Services.Screens.Service
             screen.Order = updateScreenDto.order;
             screen.IsFather = updateScreenDto.isFather;
 
-            screen.UpdatedAt = DateTime.Now;
+            screen.UpdatedAt = DateTime.Now.ToUniversalTime();
             screen.UpdatedBy = "jason.hernandez";
 
             _screenRepository.SaveChanges();

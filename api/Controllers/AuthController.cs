@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UserApp.Service.Services.Autentication;
+using UserApp.Service.Services.Autentication.Dtos;
 
 namespace UserApp.Api.Controllers
 {
@@ -12,19 +13,12 @@ namespace UserApp.Api.Controllers
         {
             _userAppAuthService = userAppAuthService;
         }
-        [HttpGet("employeeCod/{employeeCod}")]
-        public IResult GetEmployee(string employeeCod)
+        [HttpPost("login")]
+        public IResult Login(LoginDto loginDto)
         {
-            try {
-                string message = "";
-                var userDto = _userAppAuthService.UserValidByEmployeeCod(employeeCod, out message);
+            var dto = _userAppAuthService.Login(loginDto);
 
-                return Results.Ok(userDto);
-            } catch (Exception ex) {
-                return Results.BadRequest(ex.Message);
-            }
-            
-            
+            return Results.Ok(dto);
         }
     }
 }

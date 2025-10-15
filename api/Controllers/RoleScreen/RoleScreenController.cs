@@ -34,6 +34,13 @@ namespace UserApp.Api.Controllers.RoleScreen
             return Results.Ok(rs);
         }
 
+        [HttpPut()]
+        public IResult Edit(UpdateRoleScreenDto update)
+        {
+            _roleScreenService.Update(update);
+            return Results.Ok("updated");
+        }
+
         [HttpDelete("{roleScreenId}")]
         public IResult Delete(int roleScreenId)
         {

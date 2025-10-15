@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 namespace UserApp.Service.Services.RolesScreens.Dtos
 {
-    public record RoleScreenEditDto
-    (
-        int id,
-        int roleId,
-        int screenId
-    );
+    public record UpdateRoleScreenDto(int id, int roleId, int screenId) : CreateRoleScreenDto(roleId, screenId);
+    
 }

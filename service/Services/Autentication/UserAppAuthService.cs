@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UserApp.Service.Global;
+using UserApp.Service.Services.Autentication.Dtos;
 using UserApp.Service.Services.Users;
 using UserApp.Service.Services.Users.Dto;
 using UserApp.Service.Services.UsersApplications;
@@ -19,6 +20,12 @@ namespace UserApp.Service.Services.Autentication
             _userService = userService;
             _userApplicationService = userApplicationService;
         }
+
+        public UserDto Login(LoginDto loginDto)
+        {
+            return new UserDto();
+        }
+
         public UserDto? UserValidByEmployeeCod(string employeeCod, out string message)
         {
             var user = _userService.GetUserByEmployeeCod(employeeCod);

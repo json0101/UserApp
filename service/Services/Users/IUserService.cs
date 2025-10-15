@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,10 @@ namespace UserApp.Service.Services.Users
     {
         UserDto? GetUserByEmail(string email);
         UserDto? GetUserByEmployeeCod(string employeeCod);
+        List<UserGridDto> GetGrid();
+        void Update(UpdateUserDto update);
+        UserToEditDto GetToEdit(int userId);
+        int Create(CreateUserDto createUser);
+        void Delete(int userId);
     }
 }
