@@ -1,13 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using service.Commons.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons;
 using UserApp.Service.Global;
 using UserApp.Service.Services.Autentication.Dtos;
 using UserApp.Service.Services.Users;
@@ -18,17 +24,21 @@ namespace UserApp.Service.Services.Autentication
 {
     public class UserAppAuthService : IUserAppAuthService
     {
+        IOptions<AppSetting> _options;
         private readonly IUserService _userService;
         private readonly IUserApplicationService _userApplicationService;
         private readonly IRepository<User> _userRepository;
         public UserAppAuthService(
             IUserService userService, 
             IUserApplicationService userApplicationService, 
-            IRepository<User> userRepository)
+            IRepository<User> userRepository,
+            IOptions<AppSetting> options
+         )
         {
             _userService = userService;
             _userApplicationService = userApplicationService;
             _userRepository = userRepository;
+            _options = options;
         }
 
         
@@ -57,6 +67,26 @@ namespace UserApp.Service.Services.Autentication
             user.UserName = us.UserName;
             user.Email = us.Email;
             user.EmployeeCode = us.EmployeeCode;
+
+            var userDataJson = JsonSerializer.Serialize(user);
+
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.Sid, user.Id.ToString()),
+            };
+            var jwtToken = new JwtSecurityToken(
+                claims: claims,
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddHours(8),
+                signingCredentials: new SigningCredentials(
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(_options.Value.JwtSecret)
+                    ),
+                    SecurityAlgorithms.HmacSha256Signature
+                  )
+                );
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
             return user;
         }

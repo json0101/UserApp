@@ -1,13 +1,38 @@
 using api.Filter;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using UserApp.Service.Commons;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<AppSetting>(
+    builder.Configuration.GetSection("AppSetting")
+);
 
 var userAppConnectionString = builder.Configuration.GetConnectionString("UserApp");
 UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 1);
 
 string jwtSecret = builder.Configuration["AppSetting:JwtSecret"] ?? "";
-
+builder.Services.AddAuthentication(cfg => {
+    cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => {
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = false;
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            System.Text.Encoding.UTF8
+            .GetBytes(jwtSecret)
+        ),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 // Add services to the container.
 
 builder.Services.AddControllers(options =>
