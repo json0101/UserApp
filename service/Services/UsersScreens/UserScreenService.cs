@@ -48,7 +48,7 @@ namespace UserApp.Service.Services.UsersScreens
             ;
 
             var sql = user_screen_query.ToQueryString();
-            var list = user_screen_query.ToList();
+             var list = user_screen_query.ToList();
 
             return list;
         }

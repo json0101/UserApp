@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UserApp.Service.Global;
 using UserApp.Service.Services.UsersScreens;
 
 namespace UserApp.Api.Controllers.Menu
@@ -18,7 +19,7 @@ namespace UserApp.Api.Controllers.Menu
         [HttpGet]
         public IResult GetMenu()
         {
-            var menu = _userScreenService.GetMenu(1);
+            var menu = _userScreenService.GetMenu(28);
             return Results.Ok(menu);
         }
     }

@@ -43,7 +43,7 @@ namespace UserApp.Service.Services.Autentication
 
         
 
-        public UserDto Login(LoginDto loginDto)
+        public AuthDto Login(LoginDto loginDto)
         {
             byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(loginDto.password);
             byte[] inArray = SHA1.HashData(vectoBytes);
@@ -86,9 +86,10 @@ namespace UserApp.Service.Services.Autentication
                     SecurityAlgorithms.HmacSha256Signature
                   )
                 );
+
             var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-            return user;
+            return new AuthDto(user, token);
         }
 
         public UserDto? UserValidByEmployeeCod(string employeeCod, out string message)
