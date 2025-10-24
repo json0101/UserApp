@@ -27,13 +27,13 @@ namespace UserApp.Service.Services.RolesScreens
                                       Role = rs.Role.Description,
                                       ScreenId = rs.ScreenId,
                                       Screen = rs.Screen.Name,
+                                      Application = rs.Screen.Application.Description,
                                       CreatedAt = rs.CreatedAt,
                                       CreatedBy = rs.CreatedBy,
                                       UpdatedAt = rs.UpdatedAt, 
                                       UpdatedBy = rs.UpdatedBy,
                                       Active = rs.Active
                                   }
-
                               ).ToList();
 
             return roleScreen;

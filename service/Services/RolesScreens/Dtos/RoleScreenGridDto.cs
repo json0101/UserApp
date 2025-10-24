@@ -13,5 +13,6 @@ namespace UserApp.Service.Services.RolesScreens.Dtos
         public string Role { get; set; }
         public int ScreenId { get; set; }
         public string Screen { get; set; }
+        public string Application { get; set; }
     }
 }

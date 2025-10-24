@@ -10,6 +10,10 @@ namespace UserApp.Service.Services.Roles
     public interface IRoleService
     {
         List<RoleResumeDto> GetAllResume();
-        
+        List<RoleGridDto> GetGrid();
+        int CreateRole(CreateRoleDto create);
+        void Delete(int roleId);
+        RoleToEditDto GetRoleToEdit(int roleId);
+        void Update(UpdateRoleDto update);
     }
 }
