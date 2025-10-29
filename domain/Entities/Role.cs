@@ -7,7 +7,7 @@ namespace UserApp.Domain.Entities
     public class Role: BaseEntity
     {
         public string Description { get; set; }
-        public ApplicationRegister Application { get; set; }
+        public Application Application { get; set; }
         public int ApplicationId { get; set; }
         public List<UserRole> UsersRoles { get; set; }
         public List<RoleScreen> RolesScreens { get; set; }

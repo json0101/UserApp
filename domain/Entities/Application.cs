@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace UserApp.Domain.Entities
 {
-    public class ApplicationRegister: BaseEntity
+    public class Application: BaseEntity
     {
         public string Description { get; set; }
         public List<Role> Roles { get; set; }
         public List<UserApplication> UsersApplications { get; set; }
         public List<Screen> Screens { get; set; }
 
-        public class Map : BaseEntityConfiguration<ApplicationRegister>
+        public class Map : BaseEntityConfiguration<Application>
         {
-            public override void ConfigureEntity(EntityTypeBuilder<ApplicationRegister> builder)
+            public override void ConfigureEntity(EntityTypeBuilder<Application> builder)
             {
                 builder.HasKey(x => x.Id);
                 builder.Property(x => x.Id).HasColumnName("application_id");

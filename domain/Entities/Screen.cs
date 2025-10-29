@@ -13,7 +13,7 @@ namespace UserApp.Domain.Entities
         public int Order { get; set; }
         public bool IsFather { get; set; }
         public int? ApplicationId { get; set; }
-        public ApplicationRegister Application { get; set; }
+        public Application Application { get; set; }
         public List<Screen> ScreenChildren { get; set; }
         public List<RoleScreen> RolesScreens { get; set; }
         public List<ScreenAction> ScreenActions { get; set; }
