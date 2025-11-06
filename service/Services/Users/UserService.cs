@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
 using UserApp.Service.Services.Users.Dto;
+using Microsoft.AspNetCore.Http;
 
 namespace UserApp.Service.Services.Users
 {
@@ -11,10 +12,16 @@ namespace UserApp.Service.Services.Users
     {
         IRepository<User> _userRepository;
         IMapper _mapper;
-        public UserService(IRepository<User> userRepository, IMapper mapper)
+        IHttpContextAccessor _httpContextAccessor;
+        public UserService(
+            IRepository<User> userRepository, 
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor
+        )
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public void ValidateUser(CreateUserDto createUser)
@@ -183,6 +190,32 @@ namespace UserApp.Service.Services.Users
             }
 
             return user;
+        }
+
+        public void ChangePassword(ChangePasswordDto dto)
+        {
+            var user = _userRepository.GetDbSet().Where(us => us.Id == dto.userId).FirstOrDefault();
+
+            if (user == null) {
+                throw new BadRequestException("No se encontro un usuario con ese ID");
+            }
+
+            if (dto.password != dto.confirmPassword) {
+                throw new BadRequestException("Las contraseñas no coinciden");
+            }
+
+            byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(user.Password);
+            byte[] inArray = SHA1.HashData(vectoBytes);
+
+            string passwordEncrypted = Convert.ToBase64String(inArray);
+            user.Password = passwordEncrypted;
+
+            user.UpdatedAt = DateTime.UtcNow;
+            string userUpdating = _httpContextAccessor.HttpContext.User.Identity.Name;
+
+            user.UpdatedBy = userUpdating;
+
+            _userRepository.SaveChanges();
         }
     }
 }

@@ -17,5 +17,6 @@ namespace UserApp.Service.Services.Users
         UserToEditDto GetToEdit(int userId);
         int Create(CreateUserDto createUser);
         void Delete(int userId);
+        void ChangePassword(ChangePasswordDto dto);
     }
 }

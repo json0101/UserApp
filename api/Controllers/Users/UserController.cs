@@ -44,6 +44,14 @@ namespace UserApp.Api.Controllers.Users
             return Results.Ok("OK");
         }
 
+        [HttpPut("changePassword")]
+        public IResult ChangePassword(ChangePasswordDto dto)
+        {
+            _userService.ChangePassword(dto);
+
+            return Results.Ok("OK");
+        }
+
         [HttpDelete("{userId}")]
         public IResult Delete(int userId)
         {

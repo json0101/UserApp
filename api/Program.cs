@@ -33,8 +33,10 @@ builder.Services.AddAuthentication(cfg => {
         ClockSkew = TimeSpan.Zero
     };
 });
-// Add services to the container.
 
+builder.Services.AddHttpContextAccessor();
+
+// Add services to the container.
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new ExceptionFilter());
