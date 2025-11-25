@@ -15,6 +15,7 @@ namespace UserApp.Service.Services.Users
         List<UserGridDto> GetGrid();
         void Update(UpdateUserDto update);
         UserToEditDto GetToEdit(int userId);
+        List<UserResumeDto> GetResume();
         int Create(CreateUserDto createUser);
         void Delete(int userId);
         void ChangePassword(ChangePasswordDto dto);

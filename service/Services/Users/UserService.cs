@@ -179,8 +179,9 @@ namespace UserApp.Service.Services.Users
 
         public UserToEditDto GetToEdit(int userId)
         {
-            var user = (from us in _userRepository.GetDbSet()
-                        where us.Active
+            var user = (
+                        from us in _userRepository.GetDbSet()
+                        where us.Active && us.Id == userId
                         select new UserToEditDto(us.Id, us.UserName, us.Email, us.EmployeeCode)
                         ).FirstOrDefault();
 
@@ -216,6 +217,21 @@ namespace UserApp.Service.Services.Users
             user.UpdatedBy = userUpdating;
 
             _userRepository.SaveChanges();
+        }
+
+        public List<UserResumeDto> GetResume()
+        {
+            var users = (
+                    from us in _userRepository.GetDbSet()
+                    where us.Active
+                    select new UserResumeDto()
+                    {
+                        Id = us.Id,
+                        UserName = us.UserName
+                    }
+                ).ToList();
+
+            return users;
         }
     }
 }

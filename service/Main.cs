@@ -16,6 +16,7 @@ using UserApp.Service.Services.Screens.Service;
 using UserApp.Service.Services.RolesScreens;
 using UserApp.Service.Services.Roles;
 using UserApp.Service.Services.Applications;
+using UserApp.Service.Services.UserRoles;
 
 namespace UserApp.Service
 {
@@ -31,6 +32,7 @@ namespace UserApp.Service
             services.AddScoped<IApplicationService, ApplicationService>();
             services.AddScoped<IRoleScreenService, RoleScreenService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddDbContext<UserAppContext>(options => options.UseSqlServer(userAppConnectionString));

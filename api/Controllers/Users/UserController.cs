@@ -29,6 +29,14 @@ namespace UserApp.Api.Controllers.Users
             return Results.Ok(user);
         }
 
+        [HttpGet("resume")]
+        public IResult GetResume()
+        {
+            var user = _userService.GetResume();
+
+            return Results.Ok(user);
+        }
+
         [HttpPost]
         public IResult Create(CreateUserDto createUserDto)
         {
