@@ -36,4 +36,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="MigrationsSqlServer/**" />
+    <Content Remove="MigrationsSqlServer/**" />
+    <None Remove="MigrationsSqlServer/**" />
+  </ItemGroup>
+
 </Project>
