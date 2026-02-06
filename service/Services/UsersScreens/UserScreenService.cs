@@ -35,6 +35,7 @@ namespace UserApp.Service.Services.UsersScreens
                     join rs in _context.RoleScreen on r.Id equals rs.RoleId
                     join s in _context.Screen on rs.ScreenId equals s.Id
                     where u.Id == userId && s.ApplicationId == ApplicationGlobal.ApplicationGlobalID
+                    && ur.Active == true
                     select new MenuDto
                     {
                         ScreenId = s.Id,
@@ -48,7 +49,7 @@ namespace UserApp.Service.Services.UsersScreens
             ;
 
             var sql = user_screen_query.ToQueryString();
-             var list = user_screen_query.ToList();
+            var list = user_screen_query.ToList();
 
             return list;
         }
