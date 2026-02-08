@@ -19,7 +19,7 @@ namespace UserApp.Api.Controllers.Menu
         [HttpGet]
         public IResult GetMenu()
         {
-            var menu = _userScreenService.GetMenu(28);
+            var menu = _userScreenService.GetMenu(1);
             return Results.Ok(menu);
         }
     }
