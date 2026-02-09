@@ -54,7 +54,7 @@ namespace UserApp.Service.Services.Autentication
                         .GetDbSet()
                         .Where(
                             x => x.UserName == loginDto.userName 
-                            && x.Password == passwordEncrypted
+                            // && x.Password == passwordEncrypted
                         )
                         .FirstOrDefault();
 

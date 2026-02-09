@@ -22,7 +22,7 @@ namespace UserApp.Service
 {
     public static class Main
     {
-        public static IServiceCollection ConfigureService(this IServiceCollection services, string userAppConnectionString, int applicationId)
+        public static IServiceCollection ConfigureService(this IServiceCollection services, string? userAppConnectionString, int applicationId)
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserScreenService, UserScreenService>();
@@ -35,7 +35,10 @@ namespace UserApp.Service
             services.AddScoped<IUserRoleService, UserRoleService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddDbContext<UserAppContext>(options => options.UseSqlServer(userAppConnectionString));
+
+            if (!string.IsNullOrEmpty(userAppConnectionString))
+                services.AddDbContext<UserAppContext>(options => options.UseNpgsql(userAppConnectionString));
+
             var configurationMapper = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<UserProfile>();
