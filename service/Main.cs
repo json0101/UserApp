@@ -22,7 +22,7 @@ namespace UserApp.Service
 {
     public static class Main
     {
-        public static IServiceCollection ConfigureService(this IServiceCollection services, string? userAppConnectionString, int applicationId)
+        public static IServiceCollection ConfigureService(this IServiceCollection services, string? userAppConnectionString, int applicationId, string licenceAutoMapper)
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserScreenService, UserScreenService>();
@@ -39,15 +39,18 @@ namespace UserApp.Service
             if (!string.IsNullOrEmpty(userAppConnectionString))
                 services.AddDbContext<UserAppContext>(options => options.UseNpgsql(userAppConnectionString));
 
-            var configurationMapper = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<UserProfile>();
-            });
+            
+            services.AddAutoMapper(cfg =>
+                {
+                    if (!string.IsNullOrWhiteSpace(licenceAutoMapper))
+                    {
+                        cfg.LicenseKey = licenceAutoMapper;
+                    }
 
-            services.AddAutoMapper(
+                },
                 typeof(UserProfile)
             );
-
+            
             ApplicationGlobal.ApplicationGlobalID = applicationId;
             return services;
         }
