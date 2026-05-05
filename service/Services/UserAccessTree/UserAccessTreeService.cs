@@ -16,12 +16,8 @@ namespace UserApp.Service.Services.UserAccessTree
         public List<UserAccessTreeApplicationDto> GetByUser(int userId)
         {
             var applications = (
-                from userApplication in _context.UserApplication.AsNoTracking()
-                join application in _context.Application.AsNoTracking()
-                    on userApplication.ApplicationId equals application.Id
-                where userApplication.UserId == userId
-                    && userApplication.Active
-                    && application.Active
+                from application in _context.Application.AsNoTracking()
+                where application.Active
                 orderby application.Description
                 select new UserAccessTreeApplicationDto
                 {
@@ -30,7 +26,12 @@ namespace UserApp.Service.Services.UserAccessTree
                 }
             ).ToList();
 
-            var screens = (
+            var userApplicationIds = _context.UserApplication.AsNoTracking()
+                .Where(userApplication => userApplication.UserId == userId && userApplication.Active)
+                .Select(userApplication => userApplication.ApplicationId)
+                .ToHashSet();
+
+            var userScreenIds = (
                 from userRole in _context.UserRole.AsNoTracking()
                 join role in _context.Role.AsNoTracking()
                     on userRole.RoleId equals role.Id
@@ -47,6 +48,17 @@ namespace UserApp.Service.Services.UserAccessTree
                     && roleScreen.Active
                     && screen.Active
                     && userApplication.Active
+                select screen.Id
+            )
+            .Distinct()
+            .ToHashSet();
+
+            var screens = (
+                from screen in _context.Screen.AsNoTracking()
+                join application in _context.Application.AsNoTracking()
+                    on screen.ApplicationId equals (int?)application.Id
+                where screen.Active
+                    && application.Active
                 select new
                 {
                     screen.Id,
@@ -58,7 +70,6 @@ namespace UserApp.Service.Services.UserAccessTree
                     ApplicationId = screen.ApplicationId ?? 0,
                 }
             )
-            .Distinct()
             .OrderBy(screen => screen.ApplicationId)
             .ThenBy(screen => screen.Order)
             .ThenBy(screen => screen.Name)
@@ -96,16 +107,20 @@ namespace UserApp.Service.Services.UserAccessTree
                         Order = screen.Order,
                         ScreenFatherId = screen.ScreenFatherId,
                         IsFather = screen.IsFather,
+                        HasAccess = userScreenIds.Contains(screen.Id),
                         Actions = actions
                             .Where(action => action.ScreenId == screen.Id)
                             .Select(action => new UserAccessTreeActionDto
                             {
                                 Id = action.ActionId,
                                 Description = action.Description,
+                                HasAccess = userScreenIds.Contains(screen.Id),
                             })
                             .ToList()
                     })
                     .ToList();
+
+                application.HasAccess = userApplicationIds.Contains(application.Id);
             }
 
             return applications;
