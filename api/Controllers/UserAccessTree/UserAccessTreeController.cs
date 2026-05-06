@@ -15,9 +15,9 @@ namespace UserApp.Api.Controllers.UserAccessTree
         }
 
         [HttpGet("{userId}")]
-        public IResult GetByUser(int userId)
+        public IResult GetByUser(int userId, [FromQuery] int? roleId, [FromQuery] int? applicationId)
         {
-            var accessTree = _userAccessTreeService.GetByUser(userId);
+            var accessTree = _userAccessTreeService.GetByUser(userId, roleId, applicationId);
 
             return Results.Ok(accessTree);
         }

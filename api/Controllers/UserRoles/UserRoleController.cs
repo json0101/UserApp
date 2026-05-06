@@ -27,6 +27,13 @@ namespace UserApp.Api.Controllers.UserRoles
             return Results.Ok(resume);
         }
 
+        [HttpGet("by-user/{userId}")]
+        public IResult GetByUser(int userId, [FromQuery] int? applicationId)
+        {
+            var roles = _userRoleService.GetByUser(userId, applicationId);
+            return Results.Ok(roles);
+        }
+
         [HttpGet("grid")]
         public IResult GetGrid()
         {

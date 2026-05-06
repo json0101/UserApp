@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Services.Roles.Dtos;
 using UserApp.Service.Services.UserRoles.Dtos;
 
 
@@ -61,6 +62,21 @@ namespace UserApp.Service.Services.UserRoles
                              ).ToList();
 
             return userRoleResume;
+        }
+
+        public List<RoleResumeDto> GetByUser(int userId, int? applicationId = null)
+        {
+            return (
+                from userRole in _userRoleRepository.GetDbSet()
+                where userRole.Active
+                    && userRole.UserId == userId
+                    && userRole.Role.Active
+                    && (!applicationId.HasValue || userRole.Role.ApplicationId == applicationId.Value)
+                orderby userRole.Role.Description
+                select new RoleResumeDto(userRole.RoleId, userRole.Role.Description)
+            )
+            .Distinct()
+            .ToList();
         }
 
         public List<UserRoleGridDto> GetGrid()

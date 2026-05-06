@@ -13,7 +13,7 @@ namespace UserApp.Service.Services.UserAccessTree
             _context = context;
         }
 
-        public List<UserAccessTreeApplicationDto> GetByUser(int userId)
+        public List<UserAccessTreeApplicationDto> GetByUser(int userId, int? roleId = null, int? applicationId = null)
         {
             var applications = (
                 from application in _context.Application.AsNoTracking()
@@ -31,7 +31,7 @@ namespace UserApp.Service.Services.UserAccessTree
                 .Select(userApplication => userApplication.ApplicationId)
                 .ToHashSet();
 
-            var userScreenIds = (
+            var userScreenAccess = (
                 from userRole in _context.UserRole.AsNoTracking()
                 join role in _context.Role.AsNoTracking()
                     on userRole.RoleId equals role.Id
@@ -48,10 +48,27 @@ namespace UserApp.Service.Services.UserAccessTree
                     && roleScreen.Active
                     && screen.Active
                     && userApplication.Active
-                select screen.Id
+                    && (!roleId.HasValue || userRole.RoleId == roleId.Value)
+                    && (!applicationId.HasValue || role.ApplicationId == applicationId.Value)
+                select new
+                {
+                    ScreenId = screen.Id,
+                    RoleScreenId = roleScreen.Id,
+                }
             )
             .Distinct()
-            .ToHashSet();
+            .ToList();
+
+            var userScreenIds = userScreenAccess
+                .Select(screenAccess => screenAccess.ScreenId)
+                .ToHashSet();
+
+            var roleScreenIdsByScreen = userScreenAccess
+                .GroupBy(screenAccess => screenAccess.ScreenId)
+                .ToDictionary(
+                    screenAccess => screenAccess.Key,
+                    screenAccess => screenAccess.First().RoleScreenId
+                );
 
             var screens = (
                 from screen in _context.Screen.AsNoTracking()
@@ -108,6 +125,9 @@ namespace UserApp.Service.Services.UserAccessTree
                         ScreenFatherId = screen.ScreenFatherId,
                         IsFather = screen.IsFather,
                         HasAccess = userScreenIds.Contains(screen.Id),
+                        RoleScreenId = roleScreenIdsByScreen.TryGetValue(screen.Id, out var roleScreenId)
+                            ? roleScreenId
+                            : null,
                         Actions = actions
                             .Where(action => action.ScreenId == screen.Id)
                             .Select(action => new UserAccessTreeActionDto
