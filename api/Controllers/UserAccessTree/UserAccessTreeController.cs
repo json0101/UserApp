@@ -21,5 +21,13 @@ namespace UserApp.Api.Controllers.UserAccessTree
 
             return Results.Ok(accessTree);
         }
+
+        [HttpGet("application/{applicationId}")]
+        public IResult GetByApplication(int applicationId)
+        {
+            var accessTree = _userAccessTreeService.GetByApplication(applicationId);
+
+            return Results.Ok(accessTree);
+        }
     }
 }
