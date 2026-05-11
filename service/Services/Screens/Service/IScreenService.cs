@@ -15,6 +15,7 @@ namespace UserApp.Service.Services.Screens.Service
         ScreenResumeDto GetScreen(int id);
         int Save(CreateScreenDto createScreenDto);
         void Update(UpdateScreenDto updateScreenDto);
+        void Reorder(ReorderScreenDto reorderScreenDto);
         void Delete(int id);
     }
 }
