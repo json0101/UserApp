@@ -9,7 +9,7 @@ namespace UserApp.Service.Services.Roles
 {
     public interface IRoleService
     {
-        List<RoleResumeDto> GetAllResume();
+        List<RoleResumeDto> GetAllResume(int? applicationId = null);
         List<RoleGridDto> GetGrid();
         int CreateRole(CreateRoleDto create);
         void Delete(int roleId);

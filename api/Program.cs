@@ -12,7 +12,7 @@ builder.Services.Configure<AppSetting>(
 
 var userAppConnectionString = builder.Configuration.GetConnectionString("UserApp");
 var autoMapperLicenseKey = builder.Configuration["AppSetting:AutoMapperLicence"];
-UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 1, autoMapperLicenseKey ?? "");
+UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 4, autoMapperLicenseKey ?? "");
 
 string jwtSecret = builder.Configuration["AppSetting:JwtSecret"] ?? "";
 builder.Services.AddAuthentication(cfg => {

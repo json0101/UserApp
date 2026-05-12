@@ -43,7 +43,7 @@ namespace UserApp.Service
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             if (!string.IsNullOrEmpty(userAppConnectionString))
-                services.AddDbContext<UserAppContext>(options => options.UseNpgsql(userAppConnectionString));
+                services.AddDbContext<UserAppContext>(options => options.UseSqlServer(userAppConnectionString));
 
             
             services.AddAutoMapper(cfg =>

@@ -9,8 +9,8 @@ namespace UserApp.Domain {
         {
             var optionsBuilder = new DbContextOptionsBuilder<UserAppContext>();
 
-            optionsBuilder.UseNpgsql(
-                "Host=localhost;Port=5433;Database=userapp;Username=postgres;Password=123"
+            optionsBuilder.UseSqlServer(
+                "Server=COLOIMPEXDB01; Database=UserApp; User Id=ImpexSecurity;Password=S3curityL0gisticsExp0rt;TrustServerCertificate=True"
             );
 
             return new UserAppContext(optionsBuilder.Options);

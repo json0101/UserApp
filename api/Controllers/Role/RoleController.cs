@@ -21,9 +21,9 @@ namespace UserApp.Api.Controllers.Role
         }
 
         [HttpGet("resume")]
-        public IResult GetResume()
+        public IResult GetResume([FromQuery] int? applicationId)
         {
-            var resume = _rolService.GetAllResume();
+            var resume = _rolService.GetAllResume(applicationId);
             return Results.Ok(resume);
         }
 
