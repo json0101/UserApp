@@ -32,10 +32,12 @@ namespace UserApp.Service.Services.Roles
             return role.Id;
         }
 
-        public List<RoleResumeDto> GetAllResume()
+        public List<RoleResumeDto> GetAllResume(int? applicationId = null)
         {
             var rolResume = (from r in _roleRepository.GetDbSet()
                              where r.Active
+                                && (!applicationId.HasValue || r.ApplicationId == applicationId.Value)
+                             orderby r.Description
                              select new RoleResumeDto(r.Id, r.Description)
                              ).ToList();
 

@@ -13,8 +13,11 @@ namespace UserApp.Service.Services.RolesScreens
     public class RoleScreenService : IRoleScreenService
     {
         private readonly IRepository<RoleScreen> _repositoryRoleScreen;
-        public RoleScreenService(IRepository<RoleScreen> repositoryRoleScreen) {
+        private readonly IRepository<Screen> _repositoryScreen;
+
+        public RoleScreenService(IRepository<RoleScreen> repositoryRoleScreen, IRepository<Screen> repositoryScreen) {
             _repositoryRoleScreen = repositoryRoleScreen;
+            _repositoryScreen = repositoryScreen;
         }
         public List<RoleScreenGridDto> GetGrid()
         {
@@ -39,7 +42,7 @@ namespace UserApp.Service.Services.RolesScreens
             return roleScreen;
         }
 
-        public int Create(CreateRoleScreenDto createRole)
+        public List<RoleScreenAccessChangeDto> Create(CreateRoleScreenDto createRole)
         {
             if(createRole.roleId == 0)
             {
@@ -51,34 +54,76 @@ namespace UserApp.Service.Services.RolesScreens
                 throw new BadRequestException("Select the screen");
             }
 
-            var rolescreen = new RoleScreen();
-            rolescreen.RoleId = createRole.roleId;
-            rolescreen.ScreenId = createRole.screenId;
+            var rolescreen = _repositoryRoleScreen.GetDbSet()
+                .Where(roleScreen => roleScreen.RoleId == createRole.roleId
+                    && roleScreen.ScreenId == createRole.screenId
+                    && roleScreen.Active)
+                .FirstOrDefault();
 
-            rolescreen.CreatedAt = DateTime.Now.ToUniversalTime();
-            rolescreen.CreatedBy = "jason.hernandez";
-            rolescreen.Active = true;
+            if (rolescreen == null)
+            {
+                rolescreen = CreateRoleScreen(createRole.roleId, createRole.screenId);
+            }
 
-            _repositoryRoleScreen.Insert(rolescreen);
+            var changes = new List<RoleScreenAccessChangeDto>
+            {
+                new RoleScreenAccessChangeDto
+                {
+                    ScreenId = rolescreen.ScreenId,
+                    RoleScreenId = rolescreen.Id,
+                    HasAccess = true,
+                }
+            };
+
+            changes.AddRange(AddMissingScreenFathers(createRole.roleId, createRole.screenId));
+
             _repositoryRoleScreen.SaveChanges();
 
-            return rolescreen.Id;
+            changes.ForEach(change =>
+            {
+                if (change.RoleScreenId == 0)
+                {
+                    change.RoleScreenId = _repositoryRoleScreen.GetDbSet()
+                        .Where(roleScreen => roleScreen.RoleId == createRole.roleId
+                            && roleScreen.ScreenId == change.ScreenId
+                            && roleScreen.Active)
+                        .Select(roleScreen => roleScreen.Id)
+                        .FirstOrDefault();
+                }
+            });
+
+            return changes;
         }
 
-        public void Delete(int roleScreenId)
+        public List<RoleScreenAccessChangeDto> Delete(int roleScreenId)
         {
-            var roleScreen = _repositoryRoleScreen.GetDbSet().Where(x => x.Id == roleScreenId).FirstOrDefault();
+            var roleScreen = _repositoryRoleScreen.GetDbSet()
+                .Where(x => x.Id == roleScreenId && x.Active)
+                .FirstOrDefault();
 
             if(roleScreen == null)
             {
                 throw new BadRequestException("Role Screen doesn't exists");
             }
 
-            roleScreen.Active = false;
-            roleScreen.UpdatedAt = DateTime.Now.ToUniversalTime();
-            roleScreen.UpdatedBy = "";
+            var changes = new List<RoleScreenAccessChangeDto>
+            {
+                new RoleScreenAccessChangeDto
+                {
+                    ScreenId = roleScreen.ScreenId,
+                    RoleScreenId = roleScreen.Id,
+                    HasAccess = false,
+                }
+            };
+
+            DeactivateRoleScreen(roleScreen);
+            _repositoryRoleScreen.SaveChanges();
+
+            changes.AddRange(RemoveEmptyScreenFathers(roleScreen.RoleId, roleScreen.ScreenId));
 
             _repositoryRoleScreen.SaveChanges();
+
+            return changes;
         }
 
         public RoleScreenEditDto Get(int roleScreenId)
@@ -117,6 +162,117 @@ namespace UserApp.Service.Services.RolesScreens
             update.UpdatedAt = DateTime.Now.ToUniversalTime();
 
             _repositoryRoleScreen.SaveChanges();
+        }
+
+        private RoleScreen CreateRoleScreen(int roleId, int screenId)
+        {
+            var rolescreen = new RoleScreen
+            {
+                RoleId = roleId,
+                ScreenId = screenId,
+                CreatedAt = DateTime.Now.ToUniversalTime(),
+                CreatedBy = "jason.hernandez",
+                Active = true,
+            };
+
+            _repositoryRoleScreen.GetDbSet().Add(rolescreen);
+
+            return rolescreen;
+        }
+
+        private List<RoleScreenAccessChangeDto> AddMissingScreenFathers(int roleId, int screenId)
+        {
+            var changes = new List<RoleScreenAccessChangeDto>();
+            var screenFatherId = _repositoryScreen.GetDbSet()
+                .Where(screen => screen.Id == screenId && screen.Active)
+                .Select(screen => screen.ScreenFatherId)
+                .FirstOrDefault();
+
+            while (screenFatherId.HasValue)
+            {
+                var fatherRoleScreenExists = _repositoryRoleScreen.GetDbSet()
+                    .Any(roleScreen => roleScreen.RoleId == roleId
+                        && roleScreen.ScreenId == screenFatherId.Value
+                        && roleScreen.Active);
+
+                if (!fatherRoleScreenExists)
+                {
+                    var fatherRoleScreen = CreateRoleScreen(roleId, screenFatherId.Value);
+                    changes.Add(new RoleScreenAccessChangeDto
+                    {
+                        ScreenId = fatherRoleScreen.ScreenId,
+                        RoleScreenId = fatherRoleScreen.Id,
+                        HasAccess = true,
+                    });
+                }
+
+                screenFatherId = _repositoryScreen.GetDbSet()
+                    .Where(screen => screen.Id == screenFatherId.Value && screen.Active)
+                    .Select(screen => screen.ScreenFatherId)
+                    .FirstOrDefault();
+            }
+
+            return changes;
+        }
+
+        private List<RoleScreenAccessChangeDto> RemoveEmptyScreenFathers(int roleId, int screenId)
+        {
+            var changes = new List<RoleScreenAccessChangeDto>();
+            var screenFatherId = _repositoryScreen.GetDbSet()
+                .Where(screen => screen.Id == screenId && screen.Active)
+                .Select(screen => screen.ScreenFatherId)
+                .FirstOrDefault();
+
+            while (screenFatherId.HasValue)
+            {
+                var fatherHasActiveChildren = (
+                    from childScreen in _repositoryScreen.GetDbSet()
+                    join roleScreen in _repositoryRoleScreen.GetDbSet()
+                        on childScreen.Id equals roleScreen.ScreenId
+                    where childScreen.ScreenFatherId == screenFatherId.Value
+                        && childScreen.Active
+                        && roleScreen.RoleId == roleId
+                        && roleScreen.Active
+                    select childScreen.Id
+                ).Any();
+
+                if (fatherHasActiveChildren)
+                {
+                    return changes;
+                }
+
+                var fatherRoleScreen = _repositoryRoleScreen.GetDbSet()
+                    .Where(roleScreen => roleScreen.RoleId == roleId
+                        && roleScreen.ScreenId == screenFatherId.Value
+                        && roleScreen.Active)
+                    .FirstOrDefault();
+
+                if (fatherRoleScreen != null)
+                {
+                    DeactivateRoleScreen(fatherRoleScreen);
+                    changes.Add(new RoleScreenAccessChangeDto
+                    {
+                        ScreenId = fatherRoleScreen.ScreenId,
+                        RoleScreenId = fatherRoleScreen.Id,
+                        HasAccess = false,
+                    });
+                    _repositoryRoleScreen.SaveChanges();
+                }
+
+                screenFatherId = _repositoryScreen.GetDbSet()
+                    .Where(screen => screen.Id == screenFatherId.Value && screen.Active)
+                    .Select(screen => screen.ScreenFatherId)
+                    .FirstOrDefault();
+            }
+
+            return changes;
+        }
+
+        private static void DeactivateRoleScreen(RoleScreen roleScreen)
+        {
+            roleScreen.Active = false;
+            roleScreen.UpdatedAt = DateTime.Now.ToUniversalTime();
+            roleScreen.UpdatedBy = "jason.hernandez";
         }
     }
 }

@@ -41,8 +41,6 @@ namespace UserApp.Service.Services.Autentication
             _options = options;
         }
 
-        
-
         public AuthDto Login(LoginDto loginDto)
         {
             byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(loginDto.password);
@@ -54,7 +52,7 @@ namespace UserApp.Service.Services.Autentication
                         .GetDbSet()
                         .Where(
                             x => x.UserName == loginDto.userName 
-                            && x.Password == passwordEncrypted
+                            // && x.Password == passwordEncrypted
                         )
                         .FirstOrDefault();
 

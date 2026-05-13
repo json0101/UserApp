@@ -55,6 +55,13 @@ namespace UserApp.Api.Controllers.Screen
             return Results.Ok("Updated");
         }
 
+        [HttpPut("reorder")]
+        public IResult Reorder(ReorderScreenDto reorder)
+        {
+            _screenService.Reorder(reorder);
+            return Results.Ok("Updated");
+        }
+
         [HttpDelete("{id}")]
         public IResult Delete(int id)
         {

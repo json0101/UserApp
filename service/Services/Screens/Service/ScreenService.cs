@@ -147,6 +147,146 @@ namespace UserApp.Service.Services.Screens.Service
             _screenRepository.SaveChanges();
         }
 
+        public void Reorder(ReorderScreenDto reorderScreenDto)
+        {
+            var position = reorderScreenDto.position?.Trim().ToLowerInvariant();
+
+            if (position != "before" && position != "after" && position != "child")
+            {
+                throw new BadRequestException("Invalid drop position");
+            }
+
+            if (reorderScreenDto.draggedScreenId == reorderScreenDto.targetScreenId)
+            {
+                return;
+            }
+
+            var screens = _screenRepository.GetDbSet()
+                .Where(screen => screen.Active)
+                .ToList();
+
+            var draggedScreen = screens.FirstOrDefault(screen => screen.Id == reorderScreenDto.draggedScreenId);
+            var targetScreen = screens.FirstOrDefault(screen => screen.Id == reorderScreenDto.targetScreenId);
+
+            if (draggedScreen == null || targetScreen == null)
+            {
+                throw new NotFoundException("Screen Not Found");
+            }
+
+            if (draggedScreen.ApplicationId != targetScreen.ApplicationId)
+            {
+                throw new BadRequestException("Screens must belong to the same application");
+            }
+
+            if (position == "child")
+            {
+                ReorderAsChild(screens, draggedScreen, targetScreen);
+            }
+            else
+            {
+                ReorderAsSibling(screens, draggedScreen, targetScreen, position);
+            }
+
+            _screenRepository.SaveChanges();
+        }
+
+        private static void ReorderAsChild(List<Screen> screens, Screen draggedScreen, Screen targetScreen)
+        {
+            if (IsDescendantScreen(screens, draggedScreen.Id, targetScreen.Id))
+            {
+                throw new BadRequestException("No se puede mover una pantalla dentro de uno de sus hijos.");
+            }
+
+            var nextFatherId = targetScreen.Id;
+            var nextOrder = GetSiblingScreens(screens, draggedScreen.ApplicationId, nextFatherId, draggedScreen.Id)
+                .Select(screen => screen.Order)
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+
+            draggedScreen.ScreenFatherId = nextFatherId;
+            draggedScreen.Order = nextOrder;
+            TouchScreen(draggedScreen);
+        }
+
+        private static void ReorderAsSibling(List<Screen> screens, Screen draggedScreen, Screen targetScreen, string position)
+        {
+            if (IsDescendantScreen(screens, draggedScreen.Id, targetScreen.Id))
+            {
+                throw new BadRequestException("No se puede mover una pantalla junto a uno de sus hijos.");
+            }
+
+            var previousFatherId = draggedScreen.ScreenFatherId;
+            var nextFatherId = targetScreen.ScreenFatherId;
+
+            if (previousFatherId == nextFatherId && IsSameVisualPosition(screens, draggedScreen, targetScreen, position))
+            {
+                return;
+            }
+
+            var insertOrder = position == "after"
+                ? targetScreen.Order + 1
+                : targetScreen.Order;
+
+            var siblingsToShift = GetSiblingScreens(screens, draggedScreen.ApplicationId, nextFatherId, draggedScreen.Id)
+                .Where(screen => screen.Order >= insertOrder)
+                .ToList();
+
+            foreach (var screen in siblingsToShift)
+            {
+                screen.Order += 1;
+                TouchScreen(screen);
+            }
+
+            draggedScreen.ScreenFatherId = nextFatherId;
+            draggedScreen.Order = insertOrder;
+            TouchScreen(draggedScreen);
+        }
+
+        private static List<Screen> GetSiblingScreens(List<Screen> screens, int? applicationId, int? screenFatherId, int? exceptScreenId = null)
+        {
+            return screens
+                .Where(screen =>
+                    screen.ApplicationId == applicationId
+                    && screen.ScreenFatherId == screenFatherId
+                    && (!exceptScreenId.HasValue || screen.Id != exceptScreenId.Value))
+                .OrderBy(screen => screen.Order)
+                .ThenBy(screen => screen.Name)
+                .ToList();
+        }
+
+        private static bool IsSameVisualPosition(List<Screen> screens, Screen draggedScreen, Screen targetScreen, string position)
+        {
+            var siblings = GetSiblingScreens(screens, draggedScreen.ApplicationId, draggedScreen.ScreenFatherId);
+            var draggedIndex = siblings.FindIndex(screen => screen.Id == draggedScreen.Id);
+            var targetIndex = siblings.FindIndex(screen => screen.Id == targetScreen.Id);
+
+            return (position == "before" && draggedIndex == targetIndex - 1)
+                || (position == "after" && draggedIndex == targetIndex + 1);
+        }
+
+        private static void TouchScreen(Screen screen)
+        {
+            screen.UpdatedAt = DateTime.Now.ToUniversalTime();
+            screen.UpdatedBy = "jason.hernandez";
+        }
+
+        private static bool IsDescendantScreen(List<Screen> screens, int screenId, int possibleDescendantId)
+        {
+            var parentId = screens.FirstOrDefault(screen => screen.Id == possibleDescendantId)?.ScreenFatherId;
+
+            while (parentId != null)
+            {
+                if (parentId == screenId)
+                {
+                    return true;
+                }
+
+                parentId = screens.FirstOrDefault(screen => screen.Id == parentId)?.ScreenFatherId;
+            }
+
+            return false;
+        }
+
         public void Delete(int id)
         {
             var screen = _screenRepository.GetDbSet().Where(s => s.Id == id).FirstOrDefault();

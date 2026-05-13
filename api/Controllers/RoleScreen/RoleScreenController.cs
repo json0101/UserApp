@@ -44,8 +44,8 @@ namespace UserApp.Api.Controllers.RoleScreen
         [HttpDelete("{roleScreenId}")]
         public IResult Delete(int roleScreenId)
         {
-            _roleScreenService.Delete(roleScreenId);
-            return Results.Ok("OK");
+            var changes = _roleScreenService.Delete(roleScreenId);
+            return Results.Ok(changes);
         }
     }
 }

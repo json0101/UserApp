@@ -11,8 +11,8 @@ namespace UserApp.Service.Services.RolesScreens
     {
         List<RoleScreenGridDto> GetGrid();
         RoleScreenEditDto Get(int roleScreenId);
-        int Create(CreateRoleScreenDto createRole);
+        List<RoleScreenAccessChangeDto> Create(CreateRoleScreenDto createRole);
         void Update(UpdateRoleScreenDto updateRole);
-        void Delete(int roleScreenId);
+        List<RoleScreenAccessChangeDto> Delete(int roleScreenId);
     }
 }
