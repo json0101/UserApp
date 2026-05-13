@@ -9,15 +9,11 @@
     <Authors>Jason Hernandez</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseFile>license.txt</PackageLicenseFile>
+    <PackageLicenseFile>license_repository.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\domain\license.txt">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\domain\README.md">
+    <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -28,15 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="license.txt">
-      <PackagePath>\</PackagePath>
+    <None Update="license_repository.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Pack>True</Pack>
-    </None>
-    <None Update="README.md">
       <PackagePath>\</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Pack>True</Pack>
     </None>
   </ItemGroup>
 
