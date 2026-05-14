@@ -25,7 +25,7 @@ namespace UserApp.Service
 {
     public static class Main
     {
-        public static IServiceCollection ConfigureService(this IServiceCollection services, string? userAppConnectionString, int applicationId, string licenceAutoMapper)
+        public static IServiceCollection ConfigureService(this IServiceCollection services, string? userAppConnectionString, int applicationId, string licenceAutoMapper, string? databaseProvider = null)
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserScreenService, UserScreenService>();
@@ -42,8 +42,8 @@ namespace UserApp.Service
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            if (!string.IsNullOrEmpty(userAppConnectionString))
-                services.AddDbContext<UserAppContext>(options => options.UseSqlServer(userAppConnectionString));
+            if (!string.IsNullOrWhiteSpace(userAppConnectionString))
+                services.AddDbContext<UserAppContext>(options => ConfigureDatabaseProvider(options, databaseProvider, userAppConnectionString));
 
             
             services.AddAutoMapper(cfg =>
@@ -59,6 +59,29 @@ namespace UserApp.Service
             
             ApplicationGlobal.ApplicationGlobalID = applicationId;
             return services;
+        }
+
+        private static void ConfigureDatabaseProvider(DbContextOptionsBuilder options, string? databaseProvider, string connectionString)
+        {
+            var provider = string.IsNullOrWhiteSpace(databaseProvider)
+                ? "Postgres"
+                : databaseProvider.Trim();
+
+            switch (provider.ToUpperInvariant())
+            {
+                case "POSTGRES":
+                case "POSTGRESQL":
+                case "NPGSQL":
+                    options.UseNpgsql(connectionString);
+                    break;
+                case "SQLSERVER":
+                case "SQL_SERVER":
+                case "MSSQL":
+                    options.UseSqlServer(connectionString);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Database provider '{databaseProvider}' no soportado. Use 'Postgres' o 'SqlServer'.");
+            }
         }
     }
 }

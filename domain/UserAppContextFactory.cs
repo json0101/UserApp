@@ -19,11 +19,41 @@ namespace UserApp.Domain {
                 .Build();
 
             var connectionString = configuration.GetConnectionString("UserApp");
+            var databaseProvider = configuration["Database:Provider"];
 
             var optionsBuilder = new DbContextOptionsBuilder<UserAppContext>();
-            optionsBuilder.UseSqlServer(connectionString);
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("No se encontro la cadena de conexion 'ConnectionStrings:UserApp'.");
+            }
+
+            ConfigureDatabaseProvider(optionsBuilder, databaseProvider, connectionString);
 
             return new UserAppContext(optionsBuilder.Options);
+        }
+
+        private static void ConfigureDatabaseProvider(DbContextOptionsBuilder optionsBuilder, string? databaseProvider, string connectionString)
+        {
+            var provider = string.IsNullOrWhiteSpace(databaseProvider)
+                ? "Postgres"
+                : databaseProvider.Trim();
+
+            switch (provider.ToUpperInvariant())
+            {
+                case "POSTGRES":
+                case "POSTGRESQL":
+                case "NPGSQL":
+                    optionsBuilder.UseNpgsql(connectionString);
+                    break;
+                case "SQLSERVER":
+                case "SQL_SERVER":
+                case "MSSQL":
+                    optionsBuilder.UseSqlServer(connectionString);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Database provider '{databaseProvider}' no soportado. Use 'Postgres' o 'SqlServer'.");
+            }
         }
 
         private static string ResolveApiProjectPath()
