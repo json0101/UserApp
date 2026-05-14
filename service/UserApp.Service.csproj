@@ -9,7 +9,7 @@
     <Title>Manage your user and access</Title>
     <Authors>Jason Hernandez</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseFile>license.txt</PackageLicenseFile>
+    <PackageLicenseFile>license_service.txt</PackageLicenseFile>
     <Version>1.0.9</Version>
   </PropertyGroup>
 
