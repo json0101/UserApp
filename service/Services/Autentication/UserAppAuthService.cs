@@ -44,8 +44,6 @@ namespace UserApp.Service.Services.Autentication
 
         public AuthDto Login(LoginDto loginDto)
         {
-            // El hash (PBKDF2 + salt) no es deterministico, no se puede comparar en SQL:
-            // se busca por usuario y se verifica el hash guardado contra la clave recibida.
             var us = _userRepository
                         .GetDbSet()
                         .Where(x => x.UserName == loginDto.userName)

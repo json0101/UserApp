@@ -39,8 +39,6 @@ builder.Services.AddAuthentication(cfg => {
 
 builder.Services.AddHttpContextAccessor();
 
-// Por defecto TODOS los endpoints exigen un usuario autenticado.
-// Los que deban ser publicos (ej. login) se marcan con [AllowAnonymous].
 builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -48,19 +46,15 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
-// Add services to the container.
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new ExceptionFilter());
 });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Adding inyection dependency
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
