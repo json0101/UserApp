@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UserApp.Service.Services.Autentication;
 using UserApp.Service.Services.Autentication.Dtos;
 
@@ -13,6 +14,7 @@ namespace UserApp.Api.Controllers
         {
             _userAppAuthService = userAppAuthService;
         }
+        [AllowAnonymous]
         [HttpPost("login")]
         public IResult Login(LoginDto loginDto)
         {

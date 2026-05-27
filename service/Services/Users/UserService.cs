@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using service.Commons.Exceptions;
-using System.Security.Cryptography;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
 using UserApp.Service.Services.Users.Dto;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace UserApp.Service.Services.Users
 {
@@ -13,6 +13,8 @@ namespace UserApp.Service.Services.Users
         IRepository<User> _userRepository;
         IMapper _mapper;
         IHttpContextAccessor _httpContextAccessor;
+        // Hasher nativo de ASP.NET Core (PBKDF2 + salt unico por clave). Es stateless, se reusa.
+        private static readonly PasswordHasher<User> _passwordHasher = new();
         public UserService(
             IRepository<User> userRepository, 
             IMapper mapper,
@@ -81,11 +83,7 @@ namespace UserApp.Service.Services.Users
             user.Email = createUser.email;
             user.EmployeeCode = createUser.employeeCode;
 
-            byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(createUser.password);
-            byte[] inArray = SHA1.HashData(vectoBytes);
-
-            string passwordEncrypted = Convert.ToBase64String(inArray);
-            user.Password = passwordEncrypted;
+            user.Password = _passwordHasher.HashPassword(user, createUser.password);
 
             user.CreatedBy = "jason.hernandez";
             user.CreatedAt = DateTime.Now.ToUniversalTime();
@@ -205,11 +203,8 @@ namespace UserApp.Service.Services.Users
                 throw new BadRequestException("Las contraseñas no coinciden");
             }
 
-            byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(user.Password);
-            byte[] inArray = SHA1.HashData(vectoBytes);
-
-            string passwordEncrypted = Convert.ToBase64String(inArray);
-            user.Password = passwordEncrypted;
+            // Hashea la clave NUEVA (antes, por bug, rehasheaba el hash ya guardado).
+            user.Password = _passwordHasher.HashPassword(user, dto.password);
 
             user.UpdatedAt = DateTime.UtcNow;
             string userUpdating = _httpContextAccessor.HttpContext.User.Identity.Name;

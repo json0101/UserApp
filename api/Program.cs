@@ -1,5 +1,6 @@
 using api.Filter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using UserApp.Service.Commons;
@@ -13,7 +14,7 @@ builder.Services.Configure<AppSetting>(
 var userAppConnectionString = builder.Configuration.GetConnectionString("UserApp");
 var databaseProvider = builder.Configuration["Database:Provider"];
 var autoMapperLicenseKey = builder.Configuration["AppSetting:AutoMapperLicence"];
-UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 4, autoMapperLicenseKey ?? "", databaseProvider);
+UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 1, autoMapperLicenseKey ?? "", databaseProvider);
 
 string jwtSecret = builder.Configuration["AppSetting:JwtSecret"] ?? "";
 builder.Services.AddAuthentication(cfg => {
@@ -38,6 +39,15 @@ builder.Services.AddAuthentication(cfg => {
 
 builder.Services.AddHttpContextAccessor();
 
+// Por defecto TODOS los endpoints exigen un usuario autenticado.
+// Los que deban ser publicos (ej. login) se marcan con [AllowAnonymous].
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
 // Add services to the container.
 builder.Services.AddControllers(options =>
 {
@@ -59,6 +69,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
