@@ -73,6 +73,8 @@ namespace UserApp.Service.Services.Autentication
                 new Claim(ClaimTypes.Sid, user.Id.ToString()),
             };
             var jwtToken = new JwtSecurityToken(
+                issuer: _options.Value.JwtIssuer,
+                audience: _options.Value.JwtAudience,
                 claims: claims,
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddHours(8),
