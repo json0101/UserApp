@@ -18,6 +18,7 @@ namespace UserApp.Domain
         public DbSet<UserApplication> UserApplication { get; set; }
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<ActionSys> Action { get; set; }
+        public DbSet<UserLoginLog> UserLoginLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,7 @@ namespace UserApp.Domain
             modelBuilder.ApplyConfiguration(new UserRole.Map());
             modelBuilder.ApplyConfiguration(new User.Map());
             modelBuilder.ApplyConfiguration(new ActionSys.Map());
+            modelBuilder.ApplyConfiguration(new UserLoginLog.Map());
         }
     }
 }

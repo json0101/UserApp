@@ -20,6 +20,7 @@ using UserApp.Service.Services.UserRoles;
 using UserApp.Service.Services.Actions;
 using UserApp.Service.Services.ActionsScreens;
 using UserApp.Service.Services.UserAccessTree;
+using UserApp.Service.Services.UsersLoginLogs;
 
 namespace UserApp.Service
 {
@@ -39,6 +40,7 @@ namespace UserApp.Service
             services.AddScoped<IActionService, ActionService>();
             services.AddScoped<IActionScreenService, ActionScreenService>();
             services.AddScoped<IUserAccessTreeService, UserAccessTreeService>();
+            services.AddScoped<IUserLoginLogService, UserLoginLogService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
