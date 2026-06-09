@@ -11,6 +11,6 @@ namespace UserApp.Service.Services.Autentication
     public interface IUserAppAuthService
     {
         public UserDto? UserValidByEmployeeCod(string employeeCod, out string message);
-        public AuthDto Login(LoginDto loginDto);
+        public AuthDto Login(LoginDto loginDto, string? ipAddress = null, string? userAgent = null);
     }
 }

@@ -4,6 +4,6 @@ namespace UserApp.Service.Services.UsersLoginLogs
 {
     public interface IUserLoginLogService
     {
-        int RegisterLogin(CreateUserLoginLogDto create);
+        long RegisterLogin(CreateUserLoginLogDto create);
     }
 }

@@ -19,6 +19,7 @@ namespace UserApp.Domain
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<ActionSys> Action { get; set; }
         public DbSet<UserLoginLog> UserLoginLog { get; set; }
+        public DbSet<PasswordResetRequest> PasswordResetRequest { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +34,7 @@ namespace UserApp.Domain
             modelBuilder.ApplyConfiguration(new User.Map());
             modelBuilder.ApplyConfiguration(new ActionSys.Map());
             modelBuilder.ApplyConfiguration(new UserLoginLog.Map());
+            modelBuilder.ApplyConfiguration(new PasswordResetRequest.Map());
         }
     }
 }

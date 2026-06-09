@@ -15,12 +15,16 @@ namespace UserApp.Api.Controllers
         {
             _userAppAuthService = userAppAuthService;
         }
+
         [AllowAnonymous]
         [HttpPost("login")]
         [EnableRateLimiting("login")]
         public IResult Login(LoginDto loginDto)
         {
-            var dto = _userAppAuthService.Login(loginDto);
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userAgent = Request.Headers.UserAgent.ToString();
+
+            var dto = _userAppAuthService.Login(loginDto, ipAddress, userAgent);
 
             return Results.Ok(dto);
         }

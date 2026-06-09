@@ -19,6 +19,8 @@ using UserApp.Service.Services.Autentication.Dtos;
 using UserApp.Service.Services.Users;
 using UserApp.Service.Services.Users.Dto;
 using UserApp.Service.Services.UsersApplications;
+using UserApp.Service.Services.UsersLoginLogs;
+using UserApp.Service.Services.UsersLoginLogs.Dtos;
 
 namespace UserApp.Service.Services.Autentication
 {
@@ -27,11 +29,13 @@ namespace UserApp.Service.Services.Autentication
         IOptions<AppSetting> _options;
         private readonly IUserService _userService;
         private readonly IUserApplicationService _userApplicationService;
+        private readonly IUserLoginLogService _userLoginLogService;
         private readonly IRepository<User> _userRepository;
         private static readonly PasswordHasher<User> _passwordHasher = new();
         public UserAppAuthService(
             IUserService userService, 
             IUserApplicationService userApplicationService, 
+            IUserLoginLogService userLoginLogService,
             IRepository<User> userRepository,
             IOptions<AppSetting> options
          )
@@ -39,10 +43,11 @@ namespace UserApp.Service.Services.Autentication
             _userService = userService;
             _userApplicationService = userApplicationService;
             _userRepository = userRepository;
+            _userLoginLogService = userLoginLogService;
             _options = options;
         }
 
-        public AuthDto Login(LoginDto loginDto)
+        public AuthDto Login(LoginDto loginDto, string? ipAddress = null, string? userAgent = null)
         {
             var us = _userRepository
                         .GetDbSet()
@@ -51,12 +56,14 @@ namespace UserApp.Service.Services.Autentication
 
             if (us is null || string.IsNullOrEmpty(us.Password))
             {
+                TryRegisterLogin(new CreateUserLoginLogDto(null, ApplicationGlobal.ApplicationGlobalID, loginDto.userName, false, ipAddress, userAgent, "Correo no registrado"));
                 throw new NotFoundException("Correo no registrado o contraseña incorrecta");
             }
 
             var verification = _passwordHasher.VerifyHashedPassword(us, us.Password, loginDto.password);
             if (verification == PasswordVerificationResult.Failed)
             {
+                TryRegisterLogin(new CreateUserLoginLogDto(us.Id, ApplicationGlobal.ApplicationGlobalID, loginDto.userName, false, ipAddress, userAgent, "Contraseña incorrecta"));
                 throw new NotFoundException("Correo no registrado o contraseña incorrecta");
             }
 
@@ -88,7 +95,19 @@ namespace UserApp.Service.Services.Autentication
 
             var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
+            TryRegisterLogin(new CreateUserLoginLogDto(us.Id, ApplicationGlobal.ApplicationGlobalID, loginDto.userName, true, ipAddress, userAgent, null));
             return new AuthDto(user, token);
+        }
+
+        private void TryRegisterLogin(CreateUserLoginLogDto dto)
+        {
+            try
+            {
+                _userLoginLogService.RegisterLogin(dto);
+            }
+            catch
+            {
+            }
         }
 
         public UserDto? UserValidByEmployeeCod(string employeeCod, out string message)

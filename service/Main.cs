@@ -21,6 +21,8 @@ using UserApp.Service.Services.Actions;
 using UserApp.Service.Services.ActionsScreens;
 using UserApp.Service.Services.UserAccessTree;
 using UserApp.Service.Services.UsersLoginLogs;
+using UserApp.Service.Services.Emails;
+using UserApp.Service.Services.PasswordReset;
 
 namespace UserApp.Service
 {
@@ -41,6 +43,8 @@ namespace UserApp.Service
             services.AddScoped<IActionScreenService, ActionScreenService>();
             services.AddScoped<IUserAccessTreeService, UserAccessTreeService>();
             services.AddScoped<IUserLoginLogService, UserLoginLogService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IPasswordResetService, PasswordResetService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 

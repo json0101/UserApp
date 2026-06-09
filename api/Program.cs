@@ -13,6 +13,11 @@ builder.Services.Configure<AppSetting>(
     builder.Configuration.GetSection("AppSetting")
 );
 
+// Configuracion SMTP. Se puede sobreescribir por variables de entorno (ej: Email__Host, Email__Password).
+builder.Services.Configure<EmailSetting>(
+    builder.Configuration.GetSection("Email")
+);
+
 var userAppConnectionString = builder.Configuration.GetConnectionString("UserApp");
 var databaseProvider = builder.Configuration["Database:Provider"];
 var autoMapperLicenseKey = builder.Configuration["AppSetting:AutoMapperLicence"];
