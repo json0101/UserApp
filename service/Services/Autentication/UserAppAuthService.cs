@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using service.Commons.Exceptions;
@@ -7,7 +8,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -28,6 +28,7 @@ namespace UserApp.Service.Services.Autentication
         private readonly IUserService _userService;
         private readonly IUserApplicationService _userApplicationService;
         private readonly IRepository<User> _userRepository;
+        private static readonly PasswordHasher<User> _passwordHasher = new();
         public UserAppAuthService(
             IUserService userService, 
             IUserApplicationService userApplicationService, 
@@ -43,20 +44,18 @@ namespace UserApp.Service.Services.Autentication
 
         public AuthDto Login(LoginDto loginDto)
         {
-            byte[] vectoBytes = System.Text.Encoding.UTF8.GetBytes(loginDto.password);
-            byte[] inArray = SHA1.HashData(vectoBytes);
-
-            string passwordEncrypted = Convert.ToBase64String(inArray);
-
             var us = _userRepository
                         .GetDbSet()
-                        .Where(
-                            x => x.UserName == loginDto.userName 
-                            // && x.Password == passwordEncrypted
-                        )
+                        .Where(x => x.UserName == loginDto.userName)
                         .FirstOrDefault();
 
-            if (us is null)
+            if (us is null || string.IsNullOrEmpty(us.Password))
+            {
+                throw new NotFoundException("Correo no registrado o contraseña incorrecta");
+            }
+
+            var verification = _passwordHasher.VerifyHashedPassword(us, us.Password, loginDto.password);
+            if (verification == PasswordVerificationResult.Failed)
             {
                 throw new NotFoundException("Correo no registrado o contraseña incorrecta");
             }
@@ -74,6 +73,8 @@ namespace UserApp.Service.Services.Autentication
                 new Claim(ClaimTypes.Sid, user.Id.ToString()),
             };
             var jwtToken = new JwtSecurityToken(
+                issuer: _options.Value.JwtIssuer,
+                audience: _options.Value.JwtAudience,
                 claims: claims,
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddHours(8),
