@@ -1,1 +1,1 @@
-﻿Install it
+Install it

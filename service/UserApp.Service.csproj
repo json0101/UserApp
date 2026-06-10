@@ -10,14 +10,10 @@
     <Authors>Jason Hernandez</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>license_service.txt</PackageLicenseFile>
-    <Version>1.0.9</Version>
+    <Version>1.0.11</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\api\bin\Release\net8.0\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

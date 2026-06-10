@@ -21,7 +21,9 @@ builder.Services.Configure<EmailSetting>(
 var userAppConnectionString = builder.Configuration.GetConnectionString("UserApp");
 var databaseProvider = builder.Configuration["Database:Provider"];
 var autoMapperLicenseKey = builder.Configuration["AppSetting:AutoMapperLicence"];
-UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, 1, autoMapperLicenseKey ?? "", databaseProvider);
+// Cada app que consume el sistema es un Application distinto: se configura por env (AppSetting__ApplicationId).
+var applicationId = builder.Configuration.GetValue<int>("AppSetting:ApplicationId", 1);
+UserApp.Service.Main.ConfigureService(builder.Services, userAppConnectionString, applicationId, autoMapperLicenseKey ?? "", databaseProvider);
 
 string jwtSecret = builder.Configuration["AppSetting:JwtSecret"] ?? "";
 string jwtIssuer = builder.Configuration["AppSetting:JwtIssuer"] ?? "";
