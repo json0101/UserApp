@@ -11,6 +11,11 @@ namespace UserApp.Service.Services.Users.Dto
         int userId,
         string userName,
         string email,
-        string employeeCode
+        string employeeCode,
+        string? firstName = null,
+        string? lastName = null,
+        DateTime? birthDate = null,
+        string? country = null,
+        string? city = null
     );
 }

@@ -6,5 +6,16 @@ using System.Threading.Tasks;
 
 namespace UserApp.Service.Services.Users.Dto
 {
-    public record CreateUserDto(string username, string email, string employeeCode, string password, string confirmPassword);
+    public record CreateUserDto(
+        string username,
+        string email,
+        string employeeCode,
+        string password,
+        string confirmPassword,
+        string? firstName = null,
+        string? lastName = null,
+        DateTime? birthDate = null,
+        string? country = null,
+        string? city = null
+    );
 }

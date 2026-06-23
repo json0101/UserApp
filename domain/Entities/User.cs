@@ -12,6 +12,12 @@ namespace UserApp.Domain.Entities
         public int? CountryId { get; set; }
         public int? AddressId { get; set; }
         public string EmployeeCode { get; set; }
+        // Datos opcionales del usuario (pueden quedar NULL en la BD).
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public string? Country { get; set; }
+        public string? City { get; set; }
         public List<UserApplication> UsersApplications { get; set; }
         public List<UserRole> UsersRoles { get; set; }
 
@@ -27,6 +33,11 @@ namespace UserApp.Domain.Entities
                 builder.Property(x => x.CountryId).HasColumnName("country_id");
                 builder.Property(x => x.AddressId).HasColumnName("address_id");
                 builder.Property(x => x.EmployeeCode).HasColumnName("employee_code").HasMaxLength(10);
+                builder.Property(x => x.FirstName).HasColumnName("first_name").HasMaxLength(255);
+                builder.Property(x => x.LastName).HasColumnName("last_name").HasMaxLength(255);
+                builder.Property(x => x.BirthDate).HasColumnName("birth_date");
+                builder.Property(x => x.Country).HasColumnName("country").HasMaxLength(255);
+                builder.Property(x => x.City).HasColumnName("city").HasMaxLength(255);
 
                 builder.ToTable("users", "sec");
             }

@@ -86,6 +86,11 @@ namespace UserApp.Service.Services.Users
             user.UserName = createUser.username;
             user.Email = createUser.email;
             user.EmployeeCode = createUser.employeeCode;
+            user.FirstName = createUser.firstName;
+            user.LastName = createUser.lastName;
+            user.BirthDate = createUser.birthDate?.ToUniversalTime();
+            user.Country = createUser.country;
+            user.City = createUser.city;
 
             user.Password = _passwordHasher.HashPassword(user, createUser.password);
 
@@ -116,6 +121,11 @@ namespace UserApp.Service.Services.Users
             user.UserName = update.userName;
             user.Email = update.email;
             user.EmployeeCode = update.employeeCode;
+            user.FirstName = update.firstName;
+            user.LastName = update.lastName;
+            user.BirthDate = update.birthDate?.ToUniversalTime();
+            user.Country = update.country;
+            user.City = update.city;
 
             user.UpdatedAt = DateTime.Now.ToUniversalTime();
             user.UpdatedBy = _currentUser.UserName;
@@ -187,7 +197,7 @@ namespace UserApp.Service.Services.Users
             var user = (
                         from us in _userRepository.GetDbSet()
                         where us.Active && us.Id == userId
-                        select new UserToEditDto(us.Id, us.UserName, us.Email, us.EmployeeCode)
+                        select new UserToEditDto(us.Id, us.UserName, us.Email, us.EmployeeCode, us.FirstName, us.LastName, us.BirthDate, us.Country, us.City)
                         ).FirstOrDefault();
 
             if (user == null)
