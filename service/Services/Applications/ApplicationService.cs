@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Services.Applications.Dtos;
 
 
@@ -13,8 +14,10 @@ namespace UserApp.Service.Services.Applications
     public class ApplicationService : IApplicationService
     {
         private readonly IRepository<Application> _appRepository;
-        public ApplicationService(IRepository<Application> appRepository) {
+        private readonly ICurrentUserService _currentUser;
+        public ApplicationService(IRepository<Application> appRepository, ICurrentUserService currentUser) {
             _appRepository = appRepository;
+            _currentUser = currentUser;
         }
 
         public int CreateApplication(CreateApplicationDto create)
@@ -22,7 +25,7 @@ namespace UserApp.Service.Services.Applications
             Application app = new Application();
             app.Description = create.description;
             app.CreatedAt = DateTime.Now.ToUniversalTime();
-            app.CreatedBy = "";
+            app.CreatedBy = _currentUser.UserName;
             app.Active = true;
 
             _appRepository.Insert(app);
@@ -69,7 +72,7 @@ namespace UserApp.Service.Services.Applications
             }
 
             app.UpdatedAt = DateTime.Now.ToUniversalTime();
-            app.UpdatedBy = "";
+            app.UpdatedBy = _currentUser.UserName;
             app.Active = false;
             _appRepository.SaveChanges();
         }
@@ -102,8 +105,8 @@ namespace UserApp.Service.Services.Applications
             app.Description = update.description;
 
             app.UpdatedAt = DateTime.Now.ToUniversalTime();
-            app.UpdatedBy = "";
-            
+            app.UpdatedBy = _currentUser.UserName;
+
             _appRepository.SaveChanges();
         }
     }

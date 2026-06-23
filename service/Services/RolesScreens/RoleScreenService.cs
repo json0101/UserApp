@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Services.RolesScreens.Dtos;
 
 namespace UserApp.Service.Services.RolesScreens
@@ -14,10 +15,12 @@ namespace UserApp.Service.Services.RolesScreens
     {
         private readonly IRepository<RoleScreen> _repositoryRoleScreen;
         private readonly IRepository<Screen> _repositoryScreen;
+        private readonly ICurrentUserService _currentUser;
 
-        public RoleScreenService(IRepository<RoleScreen> repositoryRoleScreen, IRepository<Screen> repositoryScreen) {
+        public RoleScreenService(IRepository<RoleScreen> repositoryRoleScreen, IRepository<Screen> repositoryScreen, ICurrentUserService currentUser) {
             _repositoryRoleScreen = repositoryRoleScreen;
             _repositoryScreen = repositoryScreen;
+            _currentUser = currentUser;
         }
         public List<RoleScreenGridDto> GetGrid()
         {
@@ -158,7 +161,7 @@ namespace UserApp.Service.Services.RolesScreens
             update.ScreenId = updateRole.screenId;
             update.RoleId = updateRole.roleId;
 
-            update.UpdatedBy = "jason.hernandez";
+            update.UpdatedBy = _currentUser.UserName;
             update.UpdatedAt = DateTime.Now.ToUniversalTime();
 
             _repositoryRoleScreen.SaveChanges();
@@ -171,7 +174,7 @@ namespace UserApp.Service.Services.RolesScreens
                 RoleId = roleId,
                 ScreenId = screenId,
                 CreatedAt = DateTime.Now.ToUniversalTime(),
-                CreatedBy = "jason.hernandez",
+                CreatedBy = _currentUser.UserName,
                 Active = true,
             };
 
@@ -268,11 +271,11 @@ namespace UserApp.Service.Services.RolesScreens
             return changes;
         }
 
-        private static void DeactivateRoleScreen(RoleScreen roleScreen)
+        private void DeactivateRoleScreen(RoleScreen roleScreen)
         {
             roleScreen.Active = false;
             roleScreen.UpdatedAt = DateTime.Now.ToUniversalTime();
-            roleScreen.UpdatedBy = "jason.hernandez";
+            roleScreen.UpdatedBy = _currentUser.UserName;
         }
     }
 }

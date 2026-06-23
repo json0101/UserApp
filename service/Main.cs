@@ -5,6 +5,7 @@ using System;
 using UserApp.Domain;
 using UserApp.Repository;
 using Microsoft.EntityFrameworkCore;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Global;
 using UserApp.Service.Services.Users;
 using UserApp.Service.Services.Users.Mapper;
@@ -30,6 +31,10 @@ namespace UserApp.Service
     {
         public static IServiceCollection ConfigureService(this IServiceCollection services, string? userAppConnectionString, int applicationId, string licenceAutoMapper, string? databaseProvider = null)
         {
+            // Acceso al usuario del JWT para auditoria (CreatedBy / UpdatedBy).
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserScreenService, UserScreenService>();
             services.AddScoped<IUserApplicationService, UserApplicationService>();

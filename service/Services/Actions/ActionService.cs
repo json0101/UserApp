@@ -1,5 +1,6 @@
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Services.Actions.Dtos;
 
 namespace UserApp.Service.Services.Actions
@@ -7,8 +8,10 @@ namespace UserApp.Service.Services.Actions
     public class ActionService : IActionService
     {
         private readonly IRepository<ActionSys> _actionRepository;
-        public ActionService(IRepository<ActionSys> actionRepository) {
+        private readonly ICurrentUserService _currentUser;
+        public ActionService(IRepository<ActionSys> actionRepository, ICurrentUserService currentUser) {
             _actionRepository = actionRepository;
+            _currentUser = currentUser;
         }
 
         public int CreateAction(CreateActionDto create)
@@ -16,7 +19,7 @@ namespace UserApp.Service.Services.Actions
             ActionSys action = new ActionSys();
             action.Description = create.description;
             action.CreatedAt = DateTime.Now.ToUniversalTime();
-            action.CreatedBy = "";
+            action.CreatedBy = _currentUser.UserName;
             action.Active = true;
 
             _actionRepository.Insert(action);
@@ -63,7 +66,7 @@ namespace UserApp.Service.Services.Actions
             }
 
             action.UpdatedAt = DateTime.Now.ToUniversalTime();
-            action.UpdatedBy = "";
+            action.UpdatedBy = _currentUser.UserName;
             action.Active = false;
             _actionRepository.SaveChanges();
         }
@@ -96,8 +99,8 @@ namespace UserApp.Service.Services.Actions
             action.Description = update.description;
 
             action.UpdatedAt = DateTime.Now.ToUniversalTime();
-            action.UpdatedBy = "";
-            
+            action.UpdatedBy = _currentUser.UserName;
+
             _actionRepository.SaveChanges();
         }
     }

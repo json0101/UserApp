@@ -2,6 +2,7 @@
 using service.Commons.Exceptions;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Services.Users.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,17 +14,20 @@ namespace UserApp.Service.Services.Users
         IRepository<User> _userRepository;
         IMapper _mapper;
         IHttpContextAccessor _httpContextAccessor;
+        private readonly ICurrentUserService _currentUser;
         // Hasher nativo de ASP.NET Core (PBKDF2 + salt unico por clave). Es stateless, se reusa.
         private static readonly PasswordHasher<User> _passwordHasher = new();
         public UserService(
-            IRepository<User> userRepository, 
+            IRepository<User> userRepository,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+            ICurrentUserService currentUser
         )
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _currentUser = currentUser;
         }
 
         public void ValidateUser(CreateUserDto createUser)
@@ -85,7 +89,7 @@ namespace UserApp.Service.Services.Users
 
             user.Password = _passwordHasher.HashPassword(user, createUser.password);
 
-            user.CreatedBy = "jason.hernandez";
+            user.CreatedBy = _currentUser.UserName;
             user.CreatedAt = DateTime.Now.ToUniversalTime();
             user.Active = true;
 
@@ -112,6 +116,9 @@ namespace UserApp.Service.Services.Users
             user.UserName = update.userName;
             user.Email = update.email;
             user.EmployeeCode = update.employeeCode;
+
+            user.UpdatedAt = DateTime.Now.ToUniversalTime();
+            user.UpdatedBy = _currentUser.UserName;
 
             _userRepository.SaveChanges();
         }
@@ -169,7 +176,7 @@ namespace UserApp.Service.Services.Users
             }
 
             user.Active = false;
-            user.UpdatedBy = "jason";
+            user.UpdatedBy = _currentUser.UserName;
             user.UpdatedAt = DateTime.Now.ToUniversalTime();
 
             _userRepository.SaveChanges();
@@ -207,9 +214,7 @@ namespace UserApp.Service.Services.Users
             user.Password = _passwordHasher.HashPassword(user, dto.password);
 
             user.UpdatedAt = DateTime.UtcNow;
-            string userUpdating = _httpContextAccessor.HttpContext.User.Identity.Name;
-
-            user.UpdatedBy = userUpdating;
+            user.UpdatedBy = _currentUser.UserName;
 
             _userRepository.SaveChanges();
         }

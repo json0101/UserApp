@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Services.Roles.Dtos;
 using UserApp.Service.Services.UserRoles.Dtos;
 
@@ -15,8 +16,10 @@ namespace UserApp.Service.Services.UserRoles
     public class UserRoleService : IUserRoleService
     {
         private readonly IRepository<UserRole> _userRoleRepository;
-        public UserRoleService(IRepository<UserRole> userRoleRepository) {
+        private readonly ICurrentUserService _currentUser;
+        public UserRoleService(IRepository<UserRole> userRoleRepository, ICurrentUserService currentUser) {
             _userRoleRepository = userRoleRepository;
+            _currentUser = currentUser;
         }
 
         public bool ExistUserRole(CreateUserRoleDto create)
@@ -45,7 +48,7 @@ namespace UserApp.Service.Services.UserRoles
             userRole.UserId = create.userId;
             userRole.RoleId = create.roleId;
             userRole.CreatedAt = DateTime.Now.ToUniversalTime();
-            userRole.CreatedBy = "";
+            userRole.CreatedBy = _currentUser.UserName;
             userRole.Active = true;
 
             _userRoleRepository.Insert(userRole);
@@ -110,7 +113,7 @@ namespace UserApp.Service.Services.UserRoles
             }
 
             userRole.UpdatedAt = DateTime.Now.ToUniversalTime();
-            userRole.UpdatedBy = "";
+            userRole.UpdatedBy = _currentUser.UserName;
             userRole.Active = false;
             _userRoleRepository.SaveChanges();
         }
@@ -145,8 +148,8 @@ namespace UserApp.Service.Services.UserRoles
             userRole.RoleId = update.roleId;
 
             userRole.UpdatedAt = DateTime.Now.ToUniversalTime();
-            userRole.UpdatedBy = "";
-            
+            userRole.UpdatedBy = _currentUser.UserName;
+
             _userRoleRepository.SaveChanges();
         }
     }

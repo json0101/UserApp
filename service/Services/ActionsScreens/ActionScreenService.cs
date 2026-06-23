@@ -1,6 +1,7 @@
 using service.Commons.Exceptions;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Services.ActionsScreens.Dtos;
 
 namespace UserApp.Service.Services.ActionsScreens
@@ -8,8 +9,10 @@ namespace UserApp.Service.Services.ActionsScreens
     public class ActionScreenService : IActionScreenService
     {
         private readonly IRepository<ScreenAction> _repositoryActionScreen;
-        public ActionScreenService(IRepository<ScreenAction> repositoryActionScreen) {
+        private readonly ICurrentUserService _currentUser;
+        public ActionScreenService(IRepository<ScreenAction> repositoryActionScreen, ICurrentUserService currentUser) {
             _repositoryActionScreen = repositoryActionScreen;
+            _currentUser = currentUser;
         }
 
         public List<ActionScreenGridDto> GetGrid()
@@ -52,7 +55,7 @@ namespace UserApp.Service.Services.ActionsScreens
             actionScreen.ScreenId = createActionScreen.screenId;
 
             actionScreen.CreatedAt = DateTime.Now.ToUniversalTime();
-            actionScreen.CreatedBy = "jason.hernandez";
+            actionScreen.CreatedBy = _currentUser.UserName;
             actionScreen.Active = true;
 
             _repositoryActionScreen.Insert(actionScreen);
@@ -72,7 +75,7 @@ namespace UserApp.Service.Services.ActionsScreens
 
             actionScreen.Active = false;
             actionScreen.UpdatedAt = DateTime.Now.ToUniversalTime();
-            actionScreen.UpdatedBy = "";
+            actionScreen.UpdatedBy = _currentUser.UserName;
 
             _repositoryActionScreen.SaveChanges();
         }
@@ -109,7 +112,7 @@ namespace UserApp.Service.Services.ActionsScreens
             update.ScreenId = updateActionScreen.screenId;
             update.ActionId = updateActionScreen.actionId;
 
-            update.UpdatedBy = "jason.hernandez";
+            update.UpdatedBy = _currentUser.UserName;
             update.UpdatedAt = DateTime.Now.ToUniversalTime();
 
             _repositoryActionScreen.SaveChanges();

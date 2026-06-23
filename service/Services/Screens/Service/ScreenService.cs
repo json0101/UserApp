@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UserApp.Domain.Entities;
 using UserApp.Repository;
+using UserApp.Service.Commons.CurrentUser;
 using UserApp.Service.Services.Screens.Dtos;
 
 namespace UserApp.Service.Services.Screens.Service
@@ -13,9 +14,11 @@ namespace UserApp.Service.Services.Screens.Service
     public class ScreenService : IScreenService
     {
         public IRepository<Screen> _screenRepository { get; set; }
-        public ScreenService(IRepository<Screen> screenRepository)
+        private readonly ICurrentUserService _currentUser;
+        public ScreenService(IRepository<Screen> screenRepository, ICurrentUserService currentUser)
         {
             _screenRepository = screenRepository;
+            _currentUser = currentUser;
         }
         public List<ScreenResumeDto> GetScreens(int application_id)
         {
@@ -117,7 +120,7 @@ namespace UserApp.Service.Services.Screens.Service
 
             screen.Active = true;
             screen.CreatedAt = DateTime.Now.ToUniversalTime();
-            screen.CreatedBy = "jason.hernandez";
+            screen.CreatedBy = _currentUser.UserName;
 
             _screenRepository.Insert(screen);
             _screenRepository.SaveChanges();
@@ -142,7 +145,7 @@ namespace UserApp.Service.Services.Screens.Service
             screen.IsFather = updateScreenDto.isFather;
 
             screen.UpdatedAt = DateTime.Now.ToUniversalTime();
-            screen.UpdatedBy = "jason.hernandez";
+            screen.UpdatedBy = _currentUser.UserName;
 
             _screenRepository.SaveChanges();
         }
@@ -190,7 +193,7 @@ namespace UserApp.Service.Services.Screens.Service
             _screenRepository.SaveChanges();
         }
 
-        private static void ReorderAsChild(List<Screen> screens, Screen draggedScreen, Screen targetScreen)
+        private void ReorderAsChild(List<Screen> screens, Screen draggedScreen, Screen targetScreen)
         {
             if (IsDescendantScreen(screens, draggedScreen.Id, targetScreen.Id))
             {
@@ -208,7 +211,7 @@ namespace UserApp.Service.Services.Screens.Service
             TouchScreen(draggedScreen);
         }
 
-        private static void ReorderAsSibling(List<Screen> screens, Screen draggedScreen, Screen targetScreen, string position)
+        private void ReorderAsSibling(List<Screen> screens, Screen draggedScreen, Screen targetScreen, string position)
         {
             if (IsDescendantScreen(screens, draggedScreen.Id, targetScreen.Id))
             {
@@ -264,10 +267,10 @@ namespace UserApp.Service.Services.Screens.Service
                 || (position == "after" && draggedIndex == targetIndex + 1);
         }
 
-        private static void TouchScreen(Screen screen)
+        private void TouchScreen(Screen screen)
         {
             screen.UpdatedAt = DateTime.Now.ToUniversalTime();
-            screen.UpdatedBy = "jason.hernandez";
+            screen.UpdatedBy = _currentUser.UserName;
         }
 
         private static bool IsDescendantScreen(List<Screen> screens, int screenId, int possibleDescendantId)
@@ -298,7 +301,7 @@ namespace UserApp.Service.Services.Screens.Service
 
             screen.Active = false;
             screen.UpdatedAt = DateTime.Now;
-            screen.UpdatedBy = "jason.hernandez";
+            screen.UpdatedBy = _currentUser.UserName;
 
             _screenRepository.SaveChanges();
         }
