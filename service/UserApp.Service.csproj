@@ -30,6 +30,8 @@
   <ItemGroup>
     <ProjectReference Include="..\domain\UserApp.Domain.csproj" />
     <ProjectReference Include="..\repository\UserApp.Repository.csproj" />
+    <ProjectReference Include="..\migrations\UserApp.Migrations.SqlServer\UserApp.Migrations.SqlServer.csproj" />
+    <ProjectReference Include="..\migrations\UserApp.Migrations.Postgres\UserApp.Migrations.Postgres.csproj" />
   </ItemGroup>
 
   <ItemGroup>

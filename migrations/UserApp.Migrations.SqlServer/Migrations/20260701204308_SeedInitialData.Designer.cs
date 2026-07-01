@@ -9,11 +9,11 @@ using UserApp.Domain;
 
 #nullable disable
 
-namespace UserApp.Domain.Migrations.Screens
+namespace UserApp.Migrations.SqlServer.Migrations
 {
     [DbContext(typeof(UserAppContext))]
-    [Migration("20250401171258_AddAplicationToScreens")]
-    partial class AddAplicationToScreens
+    [Migration("20260701204308_SeedInitialData")]
+    partial class SeedInitialData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,6 +109,58 @@ namespace UserApp.Domain.Migrations.Screens
                     b.HasKey("Id");
 
                     b.ToTable("applications", "sec");
+                });
+
+            modelBuilder.Entity("UserApp.Domain.Entities.PasswordResetRequest", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("password_reset_request_id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit")
+                        .HasColumnName("active");
+
+                    b.Property<DateTime?>("DeactivatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("deactivated_at");
+
+                    b.Property<string>("EmailSentTo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("email_sent_to");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("expires_at");
+
+                    b.Property<DateTime?>("PasswordChangedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("password_changed_at");
+
+                    b.Property<string>("Pin")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("pin");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("requested_at");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("password_reset_requests", "sec");
                 });
 
             modelBuilder.Entity("UserApp.Domain.Entities.Role", b =>
@@ -346,6 +398,20 @@ namespace UserApp.Domain.Migrations.Screens
                         .HasColumnType("int")
                         .HasColumnName("address_id");
 
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("birth_date");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("city");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("country");
+
                     b.Property<int?>("CountryId")
                         .HasColumnType("int")
                         .HasColumnName("country_id");
@@ -365,6 +431,22 @@ namespace UserApp.Domain.Migrations.Screens
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("email");
+
+                    b.Property<string>("EmployeeCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("employee_code");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -440,6 +522,60 @@ namespace UserApp.Domain.Migrations.Screens
                     b.ToTable("users_applications", "sec");
                 });
 
+            modelBuilder.Entity("UserApp.Domain.Entities.UserLoginLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_login_log_id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int")
+                        .HasColumnName("application_id");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("failure_reason");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnName("ip_address");
+
+                    b.Property<DateTime>("LoginAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("login_at");
+
+                    b.Property<bool>("Successful")
+                        .HasColumnType("bit")
+                        .HasColumnName("successful");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnName("user_agent");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("username");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("users_login_logs", "sec");
+                });
+
             modelBuilder.Entity("UserApp.Domain.Entities.UserRole", b =>
                 {
                     b.Property<int>("Id")
@@ -487,6 +623,17 @@ namespace UserApp.Domain.Migrations.Screens
                     b.HasIndex("UserId");
 
                     b.ToTable("users_roles", "sec");
+                });
+
+            modelBuilder.Entity("UserApp.Domain.Entities.PasswordResetRequest", b =>
+                {
+                    b.HasOne("UserApp.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("UserApp.Domain.Entities.Role", b =>
@@ -566,6 +713,23 @@ namespace UserApp.Domain.Migrations.Screens
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Application");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserApp.Domain.Entities.UserLoginLog", b =>
+                {
+                    b.HasOne("UserApp.Domain.Entities.Application", "Application")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UserApp.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Application");
 
