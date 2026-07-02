@@ -49,3 +49,24 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ===========================================================================
+  # CD: se conecta por SSH al servidor y actualiza SOLO el contenedor userapp-api.
+  # Corre despues del build (needs) y solo en push a main.
+  # Usa los MISMOS Secrets que ya configuraste para nemesis.
+  # ===========================================================================
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Desplegar en el servidor Linux
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DROPLET_HOST }}       # <-- ajusta al nombre real de tu Secret
+          username: ${{ secrets.DROPLET_USER }}   # <-- idem
+          key: ${{ secrets.DROPLET_SSH_KEY }}     # <-- la llave PRIVADA (tu "key")
+          script: |
+            cd /opt/nemesis          # <-- ruta donde esta tu docker-compose.yml en el server
+            docker compose pull userapp-api
+            docker compose up -d userapp-api
