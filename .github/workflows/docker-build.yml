@@ -1,0 +1,51 @@
+name: Construir y publicar imagen (API)
+
+# Cuando se dispara:
+#  - push a main            -> imagen etiquetada como "latest" y con el hash del commit
+#  - push de un tag vX.Y.Z  -> imagen etiquetada como "X.Y.Z" (tu version de release)
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+# Permite que el workflow suba paquetes (imagenes) a GHCR
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Iniciar sesion en GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}   # token automatico, no configuras nada
+
+      - name: Calcular etiquetas de la imagen
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/json0101/userapp-api
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=sha,format=short
+
+      - name: Construir y publicar
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
